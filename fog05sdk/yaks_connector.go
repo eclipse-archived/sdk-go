@@ -78,9 +78,9 @@ func Dict2Args(d map[string]interface{}) string {
 			v, _ = json.Marshal(v)
 		}
 		if i == 0 {
-			s.WriteString(fmt.Sprintf("%s=%s", k, v))
+			s.WriteString(fmt.Sprintf("%s=%v", k, v))
 		} else {
-			s.WriteString(fmt.Sprintf(";%s=%s", k, v))
+			s.WriteString(fmt.Sprintf(";%s=%v", k, v))
 		}
 		i++
 	}
