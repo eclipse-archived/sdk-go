@@ -2040,6 +2040,11 @@ func (lad *LAD) GetNodeRuntimeFDUInfoPath(nodeid string, pluginid string, fduid 
 	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "info"})
 }
 
+// GetNodeRuntimeFDUInfoSelector ...
+func (lad *LAD) GetNodeRuntimeFDUInfoSelector(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "info"})
+}
+
 // GetNodeFDUInstancesSelector ...
 func (lad *LAD) GetNodeFDUInstancesSelector(nodeid string, fduid string) *yaks.Selector {
 	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", fduid, "instances", "*", "info"})
@@ -2741,7 +2746,7 @@ func (lad *LAD) RemoveNodeFDU(nodeid string, pluginid string, fduid string, inst
 
 // GetNodeFDU ...
 func (lad *LAD) GetNodeFDU(nodeid string, pluginid string, fduid string, instanceid string) (*FDURecord, error) {
-	s, _ := yaks.NewSelector(lad.GetNodeRuntimeFDUInfoPath(nodeid, pluginid, fduid, instanceid).ToString())
+	s := lad.GetNodeRuntimeFDUInfoSelector(nodeid, pluginid, fduid, instanceid)
 	kvs := lad.ws.Get(s)
 	if len(kvs) == 0 {
 		return nil, &FError{"FDU Not found", nil}
