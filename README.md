@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/badge/License-EPL%202.0-blue)](https://choosealicense.com/licenses/epl-2.0/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Documentation Status](https://img.shields.io/badge/docs-passing-green.svg)](https://godoc.org/github.com/eclipse-fog05/sdk-go/fog05sdk)
+[![Go Report Card](https://goreportcard.com/badge/github.com/eclipse-fog05/sdk-go)](https://goreportcard.com/report/github.com/eclipse-fog05/sdk-go)
 
 # Eclispe fog05 SDK Go
 
