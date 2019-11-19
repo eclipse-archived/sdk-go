@@ -14,40 +14,92 @@
 package fog05sdk
 
 const (
+	// LIVE is Live Migration kind
 	LIVE string = "LIVE"
+
+	// COLD is cold Migration kind
 	COLD string = "COLD"
 
-	BARE   string = "BARE"
-	KVM    string = "KVM"
-	KVMUK  string = "KVM_UK"
-	XEN    string = "XEN"
-	XENUK  string = "XEN_UK"
-	LXD    string = "LXD"
-	DOCKER string = "DOCKER"
-	MCU    string = "MCU"
+	//BARE is native FDU kind
+	BARE string = "BARE"
 
-	SCRIPT    string = "SCRIPT"
+	//KVM is KVM VM FDU kind
+	KVM string = "KVM"
+
+	//KVMUK is KVM unikernel FDU kind
+	KVMUK string = "KVM_UK"
+
+	//XEN is XEN VM FDU kind
+	XEN string = "XEN"
+
+	//XENUK is XEN Unikernel FDU kind
+	XENUK string = "XEN_UK"
+
+	//LXD is LXD Container FDU kind
+	LXD string = "LXD"
+
+	//DOCKER is OCI (containerd) FDU kind
+	DOCKER string = "DOCKER"
+
+	//MCU is microcontroller FDU kind
+	MCU string = "MCU"
+
+	//SCRIPT is script configuration kind
+	SCRIPT string = "SCRIPT"
+
+	//CLOUDINIT is cloud init configuration kind
 	CLOUDINIT string = "CLOUD_INIT"
 
-	INTERNAL  string = "INTERNAL"
-	EXTERNAL  string = "EXTERNAL"
-	WLAN      string = "WLAN"
+	//INTERNAL is internal interface kind
+	INTERNAL string = "INTERNAL"
+
+	//EXTERNAL is external interface kind
+	EXTERNAL string = "EXTERNAL"
+
+	//WLAN is WLAN interface kind
+	WLAN string = "WLAN"
+
+	//BLUETOOTH is Bluetooth interface kind
 	BLUETOOTH string = "BLUETOOTH"
 
-	PARAVIRT       string = "PARAVIRT"
-	FOSMGMT        string = "FOS_MGMT"
-	PCIPASSTHROUGH string = "PCI_PASSTHROUGH"
-	SRIOV          string = "SR_IOV"
-	E1000          string = "E1000"
-	RTL8139        string = "RTL8139"
-	PHYSICAL       string = "PHYSICAL"
-	BRIDGED        string = "BRIDGED"
+	//PARAVIRT is paravirtualised interface kind
+	PARAVIRT string = "PARAVIRT"
 
+	//FOSMGMT is fog05 management interface kind
+	FOSMGMT string = "FOS_MGMT"
+
+	//PCIPASSTHROUGH is PCI passthrough interface kind
+	PCIPASSTHROUGH string = "PCI_PASSTHROUGH"
+
+	//SRIOV is SR-IOV interface kind
+	SRIOV string = "SR_IOV"
+
+	//E1000 is e1000 interface kind
+	E1000 string = "E1000"
+
+	//RTL8139 is rtl8139 interface kind
+	RTL8139 string = "RTL8139"
+
+	//PHYSICAL  is physical interface kind
+	PHYSICAL string = "PHYSICAL"
+
+	//BRIDGED is bridged interface kind
+	BRIDGED string = "BRIDGED"
+
+	//GPIO is GPIO port kind
 	GPIO string = "GPIO"
-	I2C  string = "I2C"
-	BUS  string = "BUS"
-	COM  string = "COM"
-	CAN  string = "CAN"
+
+	//I2C is I2C port kind
+	I2C string = "I2C"
+
+	//BUS is BUS port kind
+	BUS string = "BUS"
+
+	//COM is COM port kind
+	COM string = "COM"
+
+	//CAN is CAN port kind
+	CAN string = "CAN"
 
 	BLOCK  string = "BLOCK"
 	FILE   string = "FILE"
