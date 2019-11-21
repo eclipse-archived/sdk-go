@@ -15,4 +15,4 @@ before_install:
 
 
 install:
-  - go build
+  - go build github.com/eclipse-fog05/sdk-go/fog05sdk
