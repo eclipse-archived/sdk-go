@@ -712,6 +712,11 @@ func (nm *NM) GetAllNodePorts() ([]ConnectionPointRecord, error) {
 	return nm.connector.Local.Desired.GetAllNodePorts(nm.node, nm.uuid)
 }
 
+// RemoveNodePort removes the given port
+func (nm *NM) RemoveNodePort(cpid string) error {
+	return nm.connector.Local.Desired.RemoveNodePort(nm.node, nm.uuid, cpid)
+}
+
 // Agent is the object to interect with the Agent
 type Agent struct {
 	connector *YaksConnector
