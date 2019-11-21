@@ -693,6 +693,21 @@ func (nm *NM) GetVLANFace() (string, error) {
 	}
 }
 
+// AddNodePort creates a new network port in the node
+func (nm *NM) AddNodePort(cp ConnectionPointRecord) error {
+	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cp.UUID, cp)
+}
+
+// GetNodePort gets the given port information
+func (nm *NM) GetNodePort(cpid string) (*ConnectionPointRecord, error) {
+	return nm.connector.Local.Desired.GetNodePort(nm.node, nm.uuid, cpid)
+}
+
+// GetAllNodePorts gets information about all the port in the node
+func (nm *NM) GetAllNodePorts() ([]ConnectionPointRecord, error) {
+	return nm.connector.Local.Desired.GetAllNodePorts(nm.node, nm.uuid)
+}
+
 // Agent is the object to interect with the Agent
 type Agent struct {
 	connector *YaksConnector

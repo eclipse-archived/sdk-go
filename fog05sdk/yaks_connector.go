@@ -2992,7 +2992,7 @@ func (lad *LAD) ObserveNodeNetworks(nodeid string, pluginid string, listener fun
 }
 
 // AddNodePort ...
-func (lad *LAD) AddNodePort(nodeid string, pluginid string, portid string, info ConnectionPointDescriptor) error {
+func (lad *LAD) AddNodePort(nodeid string, pluginid string, portid string, info ConnectionPointRecord) error {
 	s := lad.GetNodeNetworkPortInfoPath(nodeid, pluginid, portid)
 	v, err := json.Marshal(info)
 	if err != nil {
@@ -3011,14 +3011,14 @@ func (lad *LAD) RemoveNodePort(nodeid string, pluginid string, portid string) er
 }
 
 // GetNodePort ...
-func (lad *LAD) GetNodePort(nodeid string, pluginid string, portid string) (*ConnectionPointDescriptor, error) {
+func (lad *LAD) GetNodePort(nodeid string, pluginid string, portid string) (*ConnectionPointRecord, error) {
 	s, _ := yaks.NewSelector(lad.GetNodeNetworkInfoPath(nodeid, pluginid, portid).ToString())
 	kvs := lad.ws.Get(s)
 	if len(kvs) == 0 {
 		return nil, &FError{"Port Not found", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := ConnectionPointDescriptor{}
+	sv := ConnectionPointRecord{}
 	err := json.Unmarshal([]byte(v), &sv)
 	if err != nil {
 		return nil, err
@@ -3027,9 +3027,9 @@ func (lad *LAD) GetNodePort(nodeid string, pluginid string, portid string) (*Con
 }
 
 // GetAllNodePorts ...
-func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPointDescriptor, error) {
+func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPointRecord, error) {
 	s := lad.GetNodeNetworksSelector(nodeid, plugindid)
-	var ports []ConnectionPointDescriptor = []ConnectionPointDescriptor{}
+	var ports []ConnectionPointRecord = []ConnectionPointRecord{}
 	kvs := lad.ws.Get(s)
 	if len(kvs) == 0 {
 		return ports, nil
@@ -3037,7 +3037,7 @@ func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPo
 
 	for _, kv := range kvs {
 		v := kv.Value().ToString()
-		sv := ConnectionPointDescriptor{}
+		sv := ConnectionPointRecord{}
 		err := json.Unmarshal([]byte(v), &sv)
 		if err != nil {
 			return nil, err
@@ -3048,13 +3048,13 @@ func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPo
 }
 
 // ObserveNodePorts ...
-func (lad *LAD) ObserveNodePorts(nodeid string, pluginid string, listener func(ConnectionPointDescriptor)) (*yaks.SubscriptionID, error) {
+func (lad *LAD) ObserveNodePorts(nodeid string, pluginid string, listener func(ConnectionPointRecord)) (*yaks.SubscriptionID, error) {
 	s := lad.GetNodeNetworkPortsSelector(nodeid, pluginid)
 
 	cb := func(kvs []yaks.Change) {
 		if len(kvs) > 0 {
 			v := kvs[0].Value().ToString()
-			sv := ConnectionPointDescriptor{}
+			sv := ConnectionPointRecord{}
 			err := json.Unmarshal([]byte(v), &sv)
 			if err != nil {
 				panic(err.Error())
