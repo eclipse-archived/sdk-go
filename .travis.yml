@@ -12,6 +12,7 @@ go:
 
 before_install:
   - sudo curl -L -o /usr/local/lib/libzenohc.so https://www.dropbox.com/s/c6l18wbtk4eggpt/libzenohc.so
+  - sudo curl -L -o /uss/local/include/zenoh.h https://github.com/atolab/zenoh-c/blob/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh.h
   - go get github.com/atolab/yaks-go
   - go get github.com/google/uuid
   - go get github.com/sirupsen/logrus
