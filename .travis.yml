@@ -1,6 +1,6 @@
 # use the latest ubuntu environment (18.04) available on travis
 dist: xenial
-
+sudo: required
 language: go
 os:
 - linux
@@ -11,8 +11,8 @@ go:
 
 
 before_install:
-  - curl -L -o /usr/local/lib/libzenohc.so https://www.dropbox.com/s/c6l18wbtk4eggpt/libzenohc.so
+  - sudo curl -L -o /usr/local/lib/libzenohc.so https://www.dropbox.com/s/c6l18wbtk4eggpt/libzenohc.so
 
 
-script:
+install:
   - golangci-lint run       # run a bunch of code checkers/linters in parallel
