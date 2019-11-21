@@ -75,13 +75,23 @@ func Dict2Args(d map[string]interface{}) string {
 		v := d[k]
 		_, ok := v.(map[string]interface{})
 		if ok {
-			v, _ = json.Marshal(v)
-		}
-		if i == 0 {
-			s.WriteString(fmt.Sprintf("%s=%v", k, v))
+			jv, err := json.Marshal(v)
+			if err != nil {
+				panic(err)
+			}
+			if i == 0 {
+				s.WriteString(fmt.Sprintf("%s=%v", k, string(jv)))
+			} else {
+				s.WriteString(fmt.Sprintf(";%s=%v", k, string(jv)))
+			}
 		} else {
-			s.WriteString(fmt.Sprintf(";%s=%v", k, v))
+			if i == 0 {
+				s.WriteString(fmt.Sprintf("%s=%v", k, v))
+			} else {
+				s.WriteString(fmt.Sprintf(";%s=%v", k, v))
+			}
 		}
+
 		i++
 	}
 
