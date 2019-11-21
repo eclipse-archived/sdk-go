@@ -15,4 +15,4 @@ before_install:
 
 
 install:
-  - golangci-lint run       # run a bunch of code checkers/linters in parallel
+  - go build fog05sdk
