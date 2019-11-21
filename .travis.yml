@@ -12,7 +12,7 @@ go:
 
 before_install:
   - sudo curl -L -o /usr/local/lib/libzenohc.so https://www.dropbox.com/s/c6l18wbtk4eggpt/libzenohc.so
-  - sudo mkdir -p /usr/local/include/zenoh
+  - sudo mkdir -p /usr/local/include/zenoh/unix
   - sudo curl -L -o /usr/local/include/zenoh.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh.h
   - sudo curl -L -o /usr/local/include/zenoh/codec.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/codec.h
   - sudo curl -L -o /usr/local/include/zenoh/collection.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/collection.h
@@ -24,6 +24,7 @@ before_install:
   - sudo curl -L -o /usr/local/include/zenoh/result.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/result.h
   - sudo curl -L -o /usr/local/include/zenoh/rname.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/rname.h
   - sudo curl -L -o /usr/local/include/zenoh/types.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/types.h
+  - sudo curl -L -o /usr/local/include/unix/types.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/unix/types.h
   - go get github.com/atolab/yaks-go
   - go get github.com/google/uuid
   - go get github.com/sirupsen/logrus
