@@ -12,6 +12,9 @@ go:
 
 before_install:
   - sudo curl -L -o /usr/local/lib/libzenohc.so https://www.dropbox.com/s/c6l18wbtk4eggpt/libzenohc.so
+  - go get github.com/atolab/yaks-go
+  - go get github.com/google/uuid
+  - go get github.com/sirupsen/logrus
 
 
 install:
