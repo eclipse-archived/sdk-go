@@ -714,7 +714,11 @@ func (nm *NM) GetAllNodePorts() ([]ConnectionPointRecord, error) {
 
 // RemoveNodePort removes the given port
 func (nm *NM) RemoveNodePort(cpid string) error {
-	return nm.connector.Local.Desired.RemoveNodePort(nm.node, nm.uuid, cpid)
+
+	cpd, _ := nm.GetNodePort(cpid)
+	(*cpd).Status = DESTROY
+
+	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cpid, *cpd)
 }
 
 // Agent is the object to interect with the Agent
