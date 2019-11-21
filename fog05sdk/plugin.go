@@ -381,7 +381,7 @@ func (nm *NM) CreateVirtualInterface(intfid string, descriptor FDUInterfaceRecor
 }
 
 // DeleteVirtualInterface deletes the given network interface and returns its information
-func (nm *NM) DeleteVirtualInterface(intfid string) (*map[string]interface{}, error) {
+func (nm *NM) DeleteVirtualInterface(intfid string) (*string, error) {
 	r, err := nm.CallNMPluginFunction("delete_virtual_interface", map[string]interface{}{"intf_id": intfid})
 	if err != nil {
 		return nil, err
@@ -389,8 +389,8 @@ func (nm *NM) DeleteVirtualInterface(intfid string) (*map[string]interface{}, er
 
 	x := *r
 	switch bb := x.(type) {
-	case map[string]interface{}:
-		sv := x.(map[string]interface{})
+	case string:
+		sv := x.(string)
 		return &sv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
