@@ -11,6 +11,7 @@ go:
 
 
 before_install:
+  - export GO111MODULE=on
   - sudo curl -L -o /usr/local/lib/libzenohc.so https://www.dropbox.com/s/c6l18wbtk4eggpt/libzenohc.so
   - sudo mkdir -p /usr/local/include/zenoh/unix
   - sudo curl -L -o /usr/local/include/zenoh.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh.h
