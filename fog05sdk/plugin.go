@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
+	"github.com/fatih/structs"
 	"github.com/google/uuid"
 )
 
@@ -357,8 +358,11 @@ func (nm *NM) CallNMPluginFunction(fname string, fparameters map[string]interfac
 }
 
 // CreateVirtualInterface creates the given virtual interface and returns its information
-func (nm *NM) CreateVirtualInterface(intfid string, descriptor map[string]interface{}) (*map[string]interface{}, error) {
-	r, err := nm.CallNMPluginFunction("create_virtual_interface", map[string]interface{}{"intf_id": intfid, "descriptor": descriptor})
+func (nm *NM) CreateVirtualInterface(intfid string, descriptor FDUInterfaceRecord) (*map[string]interface{}, error) {
+
+	md := structs.Map(descriptor)
+
+	r, err := nm.CallNMPluginFunction("create_virtual_interface", map[string]interface{}{"intf_id": intfid, "descriptor": md})
 	if err != nil {
 		return nil, err
 	}
