@@ -11,20 +11,8 @@ go:
 
 
 before_install:
-  - sudo curl -L -o /usr/local/lib/libzenohc.so https://www.dropbox.com/s/c6l18wbtk4eggpt/libzenohc.so
-  - sudo mkdir -p /usr/local/include/zenoh/unix
-  - sudo curl -L -o /usr/local/include/zenoh.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh.h
-  - sudo curl -L -o /usr/local/include/zenoh/codec.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/codec.h
-  - sudo curl -L -o /usr/local/include/zenoh/collection.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/collection.h
-  - sudo curl -L -o /usr/local/include/zenoh/config.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/config.h
-  - sudo curl -L -o /usr/local/include/zenoh/msg.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/msg.h
-  - sudo curl -L -o /usr/local/include/zenoh/mvar.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/mvar.h
-  - sudo curl -L -o /usr/local/include/zenoh/net.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/net.h
-  - sudo curl -L -o /usr/local/include/zenoh/recv_loop.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/recv_loop.h
-  - sudo curl -L -o /usr/local/include/zenoh/result.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/result.h
-  - sudo curl -L -o /usr/local/include/zenoh/rname.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/rname.h
-  - sudo curl -L -o /usr/local/include/zenoh/types.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/zenoh/types.h
-  - sudo curl -L -o /usr/local/include/zenoh/unix/types.h https://raw.githubusercontent.com/atolab/zenoh-c/1e20bb6265c9b064e30b02c10543143f16ede5f3/include/unix/types.h
+  - sudo apt-get install -y libev4
+  - git clone https://github.com/atolab/zenoh-c && cd zenoh-c && git checkout 0.3.0 && make && sudo make install
 
 
 install:
