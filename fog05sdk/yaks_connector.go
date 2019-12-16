@@ -75,13 +75,23 @@ func Dict2Args(d map[string]interface{}) string {
 		v := d[k]
 		_, ok := v.(map[string]interface{})
 		if ok {
-			v, _ = json.Marshal(v)
-		}
-		if i == 0 {
-			s.WriteString(fmt.Sprintf("%s=%s", k, v))
+			jv, err := json.Marshal(v)
+			if err != nil {
+				panic(err)
+			}
+			if i == 0 {
+				s.WriteString(fmt.Sprintf("%s=%v", k, string(jv)))
+			} else {
+				s.WriteString(fmt.Sprintf(";%s=%v", k, string(jv)))
+			}
 		} else {
-			s.WriteString(fmt.Sprintf(";%s=%s", k, v))
+			if i == 0 {
+				s.WriteString(fmt.Sprintf("%s=%v", k, v))
+			} else {
+				s.WriteString(fmt.Sprintf(";%s=%v", k, v))
+			}
 		}
+
 		i++
 	}
 
@@ -2040,6 +2050,11 @@ func (lad *LAD) GetNodeRuntimeFDUInfoPath(nodeid string, pluginid string, fduid 
 	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "info"})
 }
 
+// GetNodeRuntimeFDUInfoSelector ...
+func (lad *LAD) GetNodeRuntimeFDUInfoSelector(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "info"})
+}
+
 // GetNodeFDUInstancesSelector ...
 func (lad *LAD) GetNodeFDUInstancesSelector(nodeid string, fduid string) *yaks.Selector {
 	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", fduid, "instances", "*", "info"})
@@ -2741,7 +2756,7 @@ func (lad *LAD) RemoveNodeFDU(nodeid string, pluginid string, fduid string, inst
 
 // GetNodeFDU ...
 func (lad *LAD) GetNodeFDU(nodeid string, pluginid string, fduid string, instanceid string) (*FDURecord, error) {
-	s, _ := yaks.NewSelector(lad.GetNodeRuntimeFDUInfoPath(nodeid, pluginid, fduid, instanceid).ToString())
+	s := lad.GetNodeRuntimeFDUInfoSelector(nodeid, pluginid, fduid, instanceid)
 	kvs := lad.ws.Get(s)
 	if len(kvs) == 0 {
 		return nil, &FError{"FDU Not found", nil}
@@ -2987,7 +3002,7 @@ func (lad *LAD) ObserveNodeNetworks(nodeid string, pluginid string, listener fun
 }
 
 // AddNodePort ...
-func (lad *LAD) AddNodePort(nodeid string, pluginid string, portid string, info ConnectionPointDescriptor) error {
+func (lad *LAD) AddNodePort(nodeid string, pluginid string, portid string, info ConnectionPointRecord) error {
 	s := lad.GetNodeNetworkPortInfoPath(nodeid, pluginid, portid)
 	v, err := json.Marshal(info)
 	if err != nil {
@@ -3006,14 +3021,14 @@ func (lad *LAD) RemoveNodePort(nodeid string, pluginid string, portid string) er
 }
 
 // GetNodePort ...
-func (lad *LAD) GetNodePort(nodeid string, pluginid string, portid string) (*ConnectionPointDescriptor, error) {
+func (lad *LAD) GetNodePort(nodeid string, pluginid string, portid string) (*ConnectionPointRecord, error) {
 	s, _ := yaks.NewSelector(lad.GetNodeNetworkInfoPath(nodeid, pluginid, portid).ToString())
 	kvs := lad.ws.Get(s)
 	if len(kvs) == 0 {
 		return nil, &FError{"Port Not found", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := ConnectionPointDescriptor{}
+	sv := ConnectionPointRecord{}
 	err := json.Unmarshal([]byte(v), &sv)
 	if err != nil {
 		return nil, err
@@ -3022,9 +3037,9 @@ func (lad *LAD) GetNodePort(nodeid string, pluginid string, portid string) (*Con
 }
 
 // GetAllNodePorts ...
-func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPointDescriptor, error) {
+func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPointRecord, error) {
 	s := lad.GetNodeNetworksSelector(nodeid, plugindid)
-	var ports []ConnectionPointDescriptor = []ConnectionPointDescriptor{}
+	var ports []ConnectionPointRecord = []ConnectionPointRecord{}
 	kvs := lad.ws.Get(s)
 	if len(kvs) == 0 {
 		return ports, nil
@@ -3032,7 +3047,7 @@ func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPo
 
 	for _, kv := range kvs {
 		v := kv.Value().ToString()
-		sv := ConnectionPointDescriptor{}
+		sv := ConnectionPointRecord{}
 		err := json.Unmarshal([]byte(v), &sv)
 		if err != nil {
 			return nil, err
@@ -3043,13 +3058,13 @@ func (lad *LAD) GetAllNodePorts(nodeid string, plugindid string) ([]ConnectionPo
 }
 
 // ObserveNodePorts ...
-func (lad *LAD) ObserveNodePorts(nodeid string, pluginid string, listener func(ConnectionPointDescriptor)) (*yaks.SubscriptionID, error) {
+func (lad *LAD) ObserveNodePorts(nodeid string, pluginid string, listener func(ConnectionPointRecord)) (*yaks.SubscriptionID, error) {
 	s := lad.GetNodeNetworkPortsSelector(nodeid, pluginid)
 
 	cb := func(kvs []yaks.Change) {
 		if len(kvs) > 0 {
 			v := kvs[0].Value().ToString()
-			sv := ConnectionPointDescriptor{}
+			sv := ConnectionPointRecord{}
 			err := json.Unmarshal([]byte(v), &sv)
 			if err != nil {
 				panic(err.Error())
@@ -3274,7 +3289,7 @@ func (yc *YaksConnector) Close() error {
 // NewYaksConnector ...
 func NewYaksConnector(locator string) (*YaksConnector, error) {
 
-	y, err := yaks.Login(locator, nil)
+	y, err := yaks.Login(&locator, nil)
 	if err != nil {
 		return nil, err
 	}

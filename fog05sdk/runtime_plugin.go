@@ -176,11 +176,11 @@ func (rt *FOSRuntimePluginAbstract) GetFDURecord(instanceid string) (*FDURecord,
 
 // AddFDURecord adds an FDU record to the node
 func (rt *FOSRuntimePluginAbstract) AddFDURecord(instanceid string, info *FDURecord) error {
-	record, err := rt.Connector.Local.Actual.GetNodeFDU(rt.Node, rt.FOSPlugin.UUID, "*", instanceid)
-	if err != nil {
-		return err
-	}
-	return rt.Connector.Local.Actual.AddNodeFDU(rt.Node, rt.FOSPlugin.UUID, record.FDUID, instanceid, *info)
+	// record, err := rt.Connector.Local.Actual.GetNodeFDU(rt.Node, rt.FOSPlugin.UUID, info.FDUID, instanceid)
+	// if err != nil {
+	// 	return err
+	// }
+	return rt.Connector.Local.Actual.AddNodeFDU(rt.Node, rt.FOSPlugin.UUID, info.FDUID, instanceid, *info)
 }
 
 // RemoveFDURecord removes an FDURecord from the node

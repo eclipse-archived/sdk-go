@@ -357,8 +357,14 @@ func (nm *NM) CallNMPluginFunction(fname string, fparameters map[string]interfac
 }
 
 // CreateVirtualInterface creates the given virtual interface and returns its information
-func (nm *NM) CreateVirtualInterface(intfid string, descriptor map[string]interface{}) (*map[string]interface{}, error) {
-	r, err := nm.CallNMPluginFunction("create_virtual_interface", map[string]interface{}{"intf_id": intfid, "descriptor": descriptor})
+func (nm *NM) CreateVirtualInterface(intfid string, descriptor FDUInterfaceRecord) (*map[string]interface{}, error) {
+
+	jd, err := json.Marshal(descriptor)
+	var md map[string]interface{}
+
+	json.Unmarshal(jd, &md)
+
+	r, err := nm.CallNMPluginFunction("create_virtual_interface", map[string]interface{}{"intf_id": intfid, "descriptor": md})
 	if err != nil {
 		return nil, err
 	}
@@ -375,7 +381,7 @@ func (nm *NM) CreateVirtualInterface(intfid string, descriptor map[string]interf
 }
 
 // DeleteVirtualInterface deletes the given network interface and returns its information
-func (nm *NM) DeleteVirtualInterface(intfid string) (*map[string]interface{}, error) {
+func (nm *NM) DeleteVirtualInterface(intfid string) (*string, error) {
 	r, err := nm.CallNMPluginFunction("delete_virtual_interface", map[string]interface{}{"intf_id": intfid})
 	if err != nil {
 		return nil, err
@@ -383,8 +389,8 @@ func (nm *NM) DeleteVirtualInterface(intfid string) (*map[string]interface{}, er
 
 	x := *r
 	switch bb := x.(type) {
-	case map[string]interface{}:
-		sv := x.(map[string]interface{})
+	case string:
+		sv := x.(string)
 		return &sv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
@@ -691,6 +697,30 @@ func (nm *NM) GetVLANFace() (string, error) {
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return "", &er
 	}
+}
+
+// AddNodePort creates a new network port in the node
+func (nm *NM) AddNodePort(cp ConnectionPointRecord) error {
+	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cp.UUID, cp)
+}
+
+// GetNodePort gets the given port information
+func (nm *NM) GetNodePort(cpid string) (*ConnectionPointRecord, error) {
+	return nm.connector.Local.Desired.GetNodePort(nm.node, nm.uuid, cpid)
+}
+
+// GetAllNodePorts gets information about all the port in the node
+func (nm *NM) GetAllNodePorts() ([]ConnectionPointRecord, error) {
+	return nm.connector.Local.Desired.GetAllNodePorts(nm.node, nm.uuid)
+}
+
+// RemoveNodePort removes the given port
+func (nm *NM) RemoveNodePort(cpid string) error {
+
+	cpd, _ := nm.GetNodePort(cpid)
+	(*cpd).Status = DESTROY
+
+	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cpid, *cpd)
 }
 
 // Agent is the object to interect with the Agent
