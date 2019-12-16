@@ -3289,7 +3289,7 @@ func (yc *YaksConnector) Close() error {
 // NewYaksConnector ...
 func NewYaksConnector(locator string) (*YaksConnector, error) {
 
-	y, err := yaks.Login(locator, nil)
+	y, err := yaks.Login(&locator, nil)
 	if err != nil {
 		return nil, err
 	}

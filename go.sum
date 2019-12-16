@@ -2,10 +2,14 @@ github.com/atolab/yaks-go v0.0.0-20191008155503-1071d06ddd9f h1:78UaNcIse73Zm/TC
 github.com/atolab/yaks-go v0.0.0-20191008155503-1071d06ddd9f/go.mod h1:GgSRgQMuB01qgXwkpfk4UuP3OLtw16SZe+nUnxaAAac=
 github.com/atolab/yaks-go v0.0.0-20191120093444-e1dcd69908f7 h1:WTX5rhh7F77BoOcu3iR4qMF6u/G+Ohg8pnqWA5QgWjs=
 github.com/atolab/yaks-go v0.0.0-20191120093444-e1dcd69908f7/go.mod h1:EXyBtqy7IkWgR/9Y+9BwTD50XvK/8UlK9j2pdfxi8oY=
+github.com/atolab/yaks-go v0.3.0 h1:UWC6C5W5cNf81wHwf0hyX4mW5kVnx4dvg/r8oYOSUMc=
+github.com/atolab/yaks-go v0.3.0/go.mod h1:lW0xMn0OMeVoMFp/SwsuIgZjhQO/YY8UFcJMGic3dvs=
 github.com/atolab/zenoh-go v0.0.0-20191010092656-8af0c89d764d h1:dla8nS0YMK7dw2NtKs6YjB5i+oUoWZhM5vrjxV5mGDI=
 github.com/atolab/zenoh-go v0.0.0-20191010092656-8af0c89d764d/go.mod h1:T5dO+TPK8KadbFO9aNx9Ok4X45S10wz+BesN6UgM//s=
 github.com/atolab/zenoh-go v0.0.0-20191107171653-0c93f6d9fcb5 h1:4PNUgMrP32/6bZI6O9WmyPXBWg9m4n/6uEcWFy3Cv5k=
 github.com/atolab/zenoh-go v0.0.0-20191107171653-0c93f6d9fcb5/go.mod h1:3Ek15mksXcvo9kZiuRnJT1T5v9eXUvLYB8RLa4nctKM=
+github.com/atolab/zenoh-go v0.3.0 h1:ZaMfrLAJeFSMvkZuWNaxgC3nhzzO8gUeiUEJC+Zq9io=
+github.com/atolab/zenoh-go v0.3.0/go.mod h1:3Ek15mksXcvo9kZiuRnJT1T5v9eXUvLYB8RLa4nctKM=
 github.com/creack/pty v1.1.7/go.mod h1:lj5s0c3V2DBrqTV7llrYr5NG6My20zk30Fl46Y7DoTY=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -32,8 +36,11 @@ golang.org/x/sys v0.0.0-20190422165155-953cdadca894/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20191029155521-f43be2a4598c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20191105231009-c1f44814a5cd h1:3x5uuvBgE6oaXJjCOvpCC1IpgJogqQ+PqGGU3ZxAgII=
 golang.org/x/sys v0.0.0-20191105231009-c1f44814a5cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20191128015809-6d18c012aee9 h1:ZBzSG/7F4eNKz2L3GE9o300RX0Az1Bw5HF7PDraD+qU=
+golang.org/x/sys v0.0.0-20191128015809-6d18c012aee9/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.4/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.5/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+gopkg.in/yaml.v2 v2.2.7/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
