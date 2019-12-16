@@ -16,4 +16,4 @@ before_install:
 
 
 install:
-  - go build ./...
+  - go build ./fog05sdk
