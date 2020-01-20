@@ -5,7 +5,7 @@
 [![Documentation Status](https://img.shields.io/badge/docs-passing-green.svg)](https://godoc.org/github.com/eclipse-fog05/sdk-go/fog05sdk)
 [![Go Report Card](https://goreportcard.com/badge/github.com/eclipse-fog05/sdk-go)](https://goreportcard.com/report/github.com/eclipse-fog05/sdk-go)
 
-# Eclispe fog05 SDK Go
+# Eclipse fog05 SDK Go
 
 This repository contains the Eclipse fog05 SDK for Go
 
