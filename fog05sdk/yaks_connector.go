@@ -3301,7 +3301,7 @@ func NewYaksConnector(locator string) (*YaksConnector, error) {
 		return nil, err
 	}
 
-	ws := y.Workspace(wpath)
+	ws := y.WorkspaceWithExecutor(wpath)
 
 	g := NewGlobal(ws)
 	l := NewLocal(ws)
