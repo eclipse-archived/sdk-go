@@ -812,6 +812,24 @@ func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string,
 	}
 }
 
+// AssignMACAddressToInterfaceInNamespace assigns the given address to the given interface in the the given network namespace, address are in the form AA:BB:CC:DD:EE:FF
+func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns string, address string) (*map[string]interface{}, error) {
+	r, err := nm.CallNMPluginFunction("assign_mac_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
 // GetAddressOfInterfaceInNamespace retrieves the address to the given interface in the the given network namespace
 func (nm *NM) GetAddressOfInterfaceInNamespace(intfName string, netns string) (*map[string]interface{}, error) {
 	r, err := nm.CallNMPluginFunction("get_address_of_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns})
