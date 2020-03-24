@@ -969,6 +969,30 @@ func (ag *Agent) GetFDUInfo(nodeid string, fduid string, instanceid string) (*FD
 	}
 }
 
+// GetFDUDescriptor returns the descriptor for the given FDU ID
+func (ag *Agent) GetFDUDescriptor(fduid string) (*FDU, error) {
+	r, err := ag.CallAgentFunction("get_fdu_info", map[string]interface{}{"fdu_uuid": fduid})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := FDU{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
 // GetNetworkInfo given a network id returns the VirtualNetwork object associated
 func (ag *Agent) GetNetworkInfo(netid string) (*VirtualNetwork, error) {
 	r, err := ag.CallAgentFunction("get_network_info", map[string]interface{}{"uuid": netid})
