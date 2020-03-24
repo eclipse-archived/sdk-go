@@ -741,20 +741,20 @@ func (nm *NM) CreateNetworkNamespace() (string, error) {
 }
 
 // DeleteNetworkNamespace deletes the given network namespace, and returns its name
-func (nm *NM) DeleteNetworkNamespace(netns string) (*map[string]interface{}, error) {
+func (nm *NM) DeleteNetworkNamespace(netns string) (string, error) {
 	r, err := nm.CallNMPluginFunction("delete_network_namespace", map[string]interface{}{"nsname": netns})
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	x := *r
 	switch bb := x.(type) {
 	case map[string]interface{}:
-		sv := x.(map[string]interface{})
-		return &sv, nil
+		sv := x.(string)
+		return sv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
-		return nil, &er
+		return "", &er
 	}
 }
 
