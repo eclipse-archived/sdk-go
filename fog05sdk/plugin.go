@@ -831,7 +831,7 @@ func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string,
 }
 
 // AssignMACAddressToInterfaceInNamespace assigns the given address to the given interface in the the given network namespace, address are in the form AA:BB:CC:DD:EE:FF
-func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns string, address string) (*InterfaceInfo, error) {
+func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns string, address string) (*NamespaceInfo, error) {
 	r, err := nm.CallNMPluginFunction("assign_mac_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
 	if err != nil {
 		return nil, err
@@ -845,7 +845,7 @@ func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns stri
 		if err != nil {
 			return nil, err
 		}
-		ssv := InterfaceInfo{}
+		ssv := NamespaceInfo{}
 		json.Unmarshal(jsv, &ssv)
 		return &ssv, nil
 	default:
