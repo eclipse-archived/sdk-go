@@ -759,7 +759,7 @@ func (nm *NM) DeleteNetworkNamespace(netns string) (*map[string]interface{}, err
 }
 
 // CreateVirtualInterfaceInNamespace creates a veth pair in the given network namespace, with the given name for the internal interface
-func (nm *NM) CreateVirtualInterfaceInNamespace(intfName string, netns string) (*map[string]interface{}, error) {
+func (nm *NM) CreateVirtualInterfaceInNamespace(intfName string, netns string) (*NamespaceInfo, error) {
 	r, err := nm.CallNMPluginFunction("create_virtual_interface_in_namespace", map[string]interface{}{"internal_name": intfName, "nsname": netns})
 	if err != nil {
 		return nil, err
@@ -769,7 +769,13 @@ func (nm *NM) CreateVirtualInterfaceInNamespace(intfName string, netns string) (
 	switch bb := x.(type) {
 	case map[string]interface{}:
 		sv := x.(map[string]interface{})
-		return &sv, nil
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return nil, &er
@@ -777,7 +783,7 @@ func (nm *NM) CreateVirtualInterfaceInNamespace(intfName string, netns string) (
 }
 
 // DeleteVirtualInterfaceFromNamespace deletes the given interface from the the given network namespace
-func (nm *NM) DeleteVirtualInterfaceFromNamespace(intfName string, netns string) (*map[string]interface{}, error) {
+func (nm *NM) DeleteVirtualInterfaceFromNamespace(intfName string, netns string) (*NamespaceInfo, error) {
 	r, err := nm.CallNMPluginFunction("delete_virtual_interface_from_namespace", map[string]interface{}{"internal_name": intfName, "nsname": netns})
 	if err != nil {
 		return nil, err
@@ -787,7 +793,13 @@ func (nm *NM) DeleteVirtualInterfaceFromNamespace(intfName string, netns string)
 	switch bb := x.(type) {
 	case map[string]interface{}:
 		sv := x.(map[string]interface{})
-		return &sv, nil
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return nil, &er
@@ -795,7 +807,7 @@ func (nm *NM) DeleteVirtualInterfaceFromNamespace(intfName string, netns string)
 }
 
 // AssignAddressToInterfaceInNamespace assigns the given address to the given interface in the the given network namespace, address are in the form AAA.AAA.AAA.AAA/NM
-func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string, address string) (*map[string]interface{}, error) {
+func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string, address string) (*NamespaceInfo, error) {
 	r, err := nm.CallNMPluginFunction("assign_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
 	if err != nil {
 		return nil, err
@@ -805,7 +817,13 @@ func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string,
 	switch bb := x.(type) {
 	case map[string]interface{}:
 		sv := x.(map[string]interface{})
-		return &sv, nil
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return nil, &er
@@ -813,7 +831,7 @@ func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string,
 }
 
 // AssignMACAddressToInterfaceInNamespace assigns the given address to the given interface in the the given network namespace, address are in the form AA:BB:CC:DD:EE:FF
-func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns string, address string) (*map[string]interface{}, error) {
+func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns string, address string) (*InterfaceInfo, error) {
 	r, err := nm.CallNMPluginFunction("assign_mac_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
 	if err != nil {
 		return nil, err
@@ -823,7 +841,13 @@ func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns stri
 	switch bb := x.(type) {
 	case map[string]interface{}:
 		sv := x.(map[string]interface{})
-		return &sv, nil
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := InterfaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return nil, &er
@@ -831,7 +855,7 @@ func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns stri
 }
 
 // GetAddressOfInterfaceInNamespace retrieves the address to the given interface in the the given network namespace
-func (nm *NM) GetAddressOfInterfaceInNamespace(intfName string, netns string) (*map[string]interface{}, error) {
+func (nm *NM) GetAddressOfInterfaceInNamespace(intfName string, netns string) (*InterfaceInfo, error) {
 	r, err := nm.CallNMPluginFunction("get_address_of_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns})
 	if err != nil {
 		return nil, err
@@ -841,7 +865,13 @@ func (nm *NM) GetAddressOfInterfaceInNamespace(intfName string, netns string) (*
 	switch bb := x.(type) {
 	case map[string]interface{}:
 		sv := x.(map[string]interface{})
-		return &sv, nil
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := InterfaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return nil, &er
@@ -849,7 +879,7 @@ func (nm *NM) GetAddressOfInterfaceInNamespace(intfName string, netns string) (*
 }
 
 // RemoveAddressFromInterfaceInNamespace removes the address from the given interface in the the given network namespace
-func (nm *NM) RemoveAddressFromInterfaceInNamespace(intfName string, netns string) (*map[string]interface{}, error) {
+func (nm *NM) RemoveAddressFromInterfaceInNamespace(intfName string, netns string) (*NamespaceInfo, error) {
 	r, err := nm.CallNMPluginFunction("remove_address_from_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns})
 	if err != nil {
 		return nil, err
@@ -859,7 +889,13 @@ func (nm *NM) RemoveAddressFromInterfaceInNamespace(intfName string, netns strin
 	switch bb := x.(type) {
 	case map[string]interface{}:
 		sv := x.(map[string]interface{})
-		return &sv, nil
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return nil, &er

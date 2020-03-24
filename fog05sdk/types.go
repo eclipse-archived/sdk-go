@@ -215,14 +215,7 @@ type Plugin struct {
 	Configuration *jsont   `json:"configuration,omitempty"`
 }
 
-// EvalResult represents results of Eval
-type EvalResult struct {
-	Result       *interface{} `json:"result,omitempty"`
-	Error        *int         `json:"error,omitempty"`
-	ErrorMessage *string      `json:"error_msg,omitempty"`
-}
-
-// InterfaceInfo ...
+// InterfaceInfo represents the results of interface managements functions in the network manager plugin
 type InterfaceInfo struct {
 	Name string `json:"name"`
 	IPV4 string `json:"ipv4"`
@@ -230,9 +223,16 @@ type InterfaceInfo struct {
 	MAC  string `json:"mac"`
 }
 
-// NamespaceInfo ...
+// NamespaceInfo represents the results of network namespace managements functions in the network manager plugin
 type NamespaceInfo struct {
 	Namespace string        `json:"namespace"`
 	Internal  InterfaceInfo `json:"internal"`
 	External  InterfaceInfo `json:"external"`
+}
+
+// EvalResult represents results of Eval
+type EvalResult struct {
+	Result       *interface{} `json:"result,omitempty"`
+	Error        *int         `json:"error,omitempty"`
+	ErrorMessage *string      `json:"error_msg,omitempty"`
 }
