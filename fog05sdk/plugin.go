@@ -723,6 +723,185 @@ func (nm *NM) RemoveNodePort(cpid string) error {
 	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cpid, *cpd)
 }
 
+// CreateNetworkNamespace creates a new network namespace, and returns its name
+func (nm *NM) CreateNetworkNamespace() (string, error) {
+	r, err := nm.CallNMPluginFunction("create_network_namespace", map[string]interface{}{})
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case string:
+		return x.(string), nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
+	}
+}
+
+// DeleteNetworkNamespace deletes the given network namespace, and returns its name
+func (nm *NM) DeleteNetworkNamespace(netns string) (string, error) {
+	r, err := nm.CallNMPluginFunction("delete_network_namespace", map[string]interface{}{"nsname": netns})
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(string)
+		return sv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
+	}
+}
+
+// CreateVirtualInterfaceInNamespace creates a veth pair in the given network namespace, with the given name for the internal interface
+func (nm *NM) CreateVirtualInterfaceInNamespace(intfName string, netns string) (*NamespaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("create_virtual_interface_in_namespace", map[string]interface{}{"internal_name": intfName, "nsname": netns})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// DeleteVirtualInterfaceFromNamespace deletes the given interface from the the given network namespace
+func (nm *NM) DeleteVirtualInterfaceFromNamespace(intfName string, netns string) (*NamespaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("delete_virtual_interface_from_namespace", map[string]interface{}{"internal_name": intfName, "nsname": netns})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// AssignAddressToInterfaceInNamespace assigns the given address to the given interface in the the given network namespace, address are in the form AAA.AAA.AAA.AAA/NM
+func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string, address string) (*NamespaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("assign_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// AssignMACAddressToInterfaceInNamespace assigns the given address to the given interface in the the given network namespace, address are in the form AA:BB:CC:DD:EE:FF
+func (nm *NM) AssignMACAddressToInterfaceInNamespace(intfName string, netns string, address string) (*NamespaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("assign_mac_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// GetAddressOfInterfaceInNamespace retrieves the address to the given interface in the the given network namespace
+func (nm *NM) GetAddressOfInterfaceInNamespace(intfName string, netns string) (*InterfaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("get_address_of_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := InterfaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// RemoveAddressFromInterfaceInNamespace removes the address from the given interface in the the given network namespace
+func (nm *NM) RemoveAddressFromInterfaceInNamespace(intfName string, netns string) (*NamespaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("remove_address_from_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := NamespaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
 // Agent is the object to interect with the Agent
 type Agent struct {
 	connector *YaksConnector
@@ -769,6 +948,30 @@ func (ag *Agent) GetImageInfo(imgid string) (*FDUImage, error) {
 // GetFDUInfo given a node id, fdu id and instance id returns the FDU object associated
 func (ag *Agent) GetFDUInfo(nodeid string, fduid string, instanceid string) (*FDU, error) {
 	r, err := ag.CallAgentFunction("get_node_fdu_info", map[string]interface{}{"fdu_uuid": fduid, "instance_uuid": instanceid, "node_uuid": nodeid})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := FDU{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// GetFDUDescriptor returns the descriptor for the given FDU ID
+func (ag *Agent) GetFDUDescriptor(fduid string) (*FDU, error) {
+	r, err := ag.CallAgentFunction("get_fdu_info", map[string]interface{}{"fdu_uuid": fduid})
 	if err != nil {
 		return nil, err
 	}
