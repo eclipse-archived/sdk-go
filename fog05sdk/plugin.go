@@ -786,8 +786,8 @@ func (nm *NM) MoveInterfaceInNamespace(intfName string, netns string) (*Interfac
 }
 
 // AttachInterfaceToBridge attaches the given interface to the given bridge
-func (nm *NM) AttachInterfaceToBridge(intfName string, brname string) (*InterfaceInfo, error) {
-	r, err := nm.CallNMPluginFunction("attach_interface_to_bridge", map[string]interface{}{"intf_name": intfName, "brname": brname})
+func (nm *NM) AttachInterfaceToBridge(intfName string, brName string) (*InterfaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("attach_interface_to_bridge", map[string]interface{}{"intf_name": intfName, "br_name": brName})
 	if err != nil {
 		return nil, err
 	}
