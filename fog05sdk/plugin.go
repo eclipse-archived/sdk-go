@@ -723,6 +723,65 @@ func (nm *NM) RemoveNodePort(cpid string) error {
 	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cpid, *cpd)
 }
 
+// CreateConnectionPoint creates the given connection point
+func (nm *NM) CreateConnectionPoint(descriptor ConnectionPointDescriptor) (*ConnectionPointRecord, error) {
+	v, err := json.Marshal(descriptor)
+	if err != nil {
+		return nil, err
+	}
+	var md map[string]interface{}
+
+	err = json.Unmarshal(v, &md)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := nm.CallNMPluginFunction("create_port_agent", map[string]interface{}{"descriptor": md})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := ConnectionPointRecord{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// RemoveConnectionPoint removes the given connection point
+func (nm *NM) RemoveConnectionPoint(cpid string) (*ConnectionPointRecord, error) {
+	r, err := nm.CallNMPluginFunction("destroy_port_agent", map[string]interface{}{"cp_id": cpid})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := ConnectionPointRecord{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
 // CreateMACVLANInterface creates a MACVLAN interface over the given interface
 func (nm *NM) CreateMACVLANInterface(masterIntf string) (string, error) {
 	r, err := nm.CallNMPluginFunction("create_macvlan_interface", map[string]interface{}{"master_intf": masterIntf})
