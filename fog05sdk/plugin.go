@@ -723,6 +723,43 @@ func (nm *NM) RemoveNodePort(cpid string) error {
 	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cpid, *cpd)
 }
 
+// CreateMACVLANInterface creates a MACVLAN interface over the given interface
+func (nm *NM) CreateMACVLANInterface(masterIntf string) (string, error) {
+	r, err := nm.CallNMPluginFunction("create_macvlan_interface", map[string]interface{}{"master_intf": masterIntf})
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case string:
+		return x.(string), nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
+	}
+}
+
+// DeleteMACVLANInterface deletes the given MACVLAN interface
+func (nm *NM) DeleteMACVLANInterface(intfName string, netns string) (string, error) {
+	if netns == "" {
+		netns = "1"
+	}
+	r, err := nm.CallNMPluginFunction("delete_macvlan_interface", map[string]interface{}{"intfName": intfName, "netns": netns})
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case string:
+		return x.(string), nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
+	}
+}
+
 // CreateNetworkNamespace creates a new network namespace, and returns its name
 func (nm *NM) CreateNetworkNamespace() (string, error) {
 	r, err := nm.CallNMPluginFunction("create_network_namespace", map[string]interface{}{})
@@ -782,6 +819,30 @@ func (nm *NM) MoveInterfaceInNamespace(intfName string, netns string) (*Interfac
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return nil, &er
+	}
+}
+
+// RenameVirtualInterfaceInNamespace renames the given interface
+func (nm *NM) RenameVirtualInterfaceInNamespace(name string, newname string, nsname string) (string, error) {
+	var r *interface{}
+	var err error
+	if nsname == "" {
+		r, err = nm.CallNMPluginFunction("rename_virtual_interface_in_namespace", map[string]interface{}{"name": name, "newname": newname})
+	} else {
+		r, err = nm.CallNMPluginFunction("rename_virtual_interface_in_namespace", map[string]interface{}{"name": name, "newname": newname, "nsname": nsname})
+	}
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(string)
+		return sv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
 	}
 }
 
