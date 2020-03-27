@@ -723,6 +723,102 @@ func (nm *NM) RemoveNodePort(cpid string) error {
 	return nm.connector.Local.Desired.AddNodePort(nm.node, nm.uuid, cpid, *cpd)
 }
 
+// CreateConnectionPoint creates the given connection point
+func (nm *NM) CreateConnectionPoint(descriptor ConnectionPointDescriptor) (*ConnectionPointRecord, error) {
+	v, err := json.Marshal(descriptor)
+	if err != nil {
+		return nil, err
+	}
+	var md map[string]interface{}
+
+	err = json.Unmarshal(v, &md)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := nm.CallNMPluginFunction("create_port_agent", map[string]interface{}{"descriptor": md})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := ConnectionPointRecord{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// RemoveConnectionPoint removes the given connection point
+func (nm *NM) RemoveConnectionPoint(cpid string) (*ConnectionPointRecord, error) {
+	r, err := nm.CallNMPluginFunction("destroy_port_agent", map[string]interface{}{"cp_id": cpid})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := ConnectionPointRecord{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// CreateMACVLANInterface creates a MACVLAN interface over the given interface
+func (nm *NM) CreateMACVLANInterface(masterIntf string) (string, error) {
+	r, err := nm.CallNMPluginFunction("create_macvlan_interface", map[string]interface{}{"master_intf": masterIntf})
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case string:
+		return x.(string), nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
+	}
+}
+
+// DeleteMACVLANInterface deletes the given MACVLAN interface
+func (nm *NM) DeleteMACVLANInterface(intfName string, netns string) (string, error) {
+	if netns == "" {
+		netns = "1"
+	}
+	r, err := nm.CallNMPluginFunction("delete_macvlan_interface", map[string]interface{}{"intfName": intfName, "netns": netns})
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case string:
+		return x.(string), nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
+	}
+}
+
 // CreateNetworkNamespace creates a new network namespace, and returns its name
 func (nm *NM) CreateNetworkNamespace() (string, error) {
 	r, err := nm.CallNMPluginFunction("create_network_namespace", map[string]interface{}{})
@@ -755,6 +851,105 @@ func (nm *NM) DeleteNetworkNamespace(netns string) (string, error) {
 	default:
 		er := FError{"Unexpected type: " + bb.(string), nil}
 		return "", &er
+	}
+}
+
+// MoveInterfaceInNamespace moves the given interface to the given namespace, is netns is empty will move to the default namespace
+func (nm *NM) MoveInterfaceInNamespace(intfName string, netns string) (*InterfaceInfo, error) {
+	if netns == "" {
+		netns = "1"
+	}
+	r, err := nm.CallNMPluginFunction("move_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := InterfaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// RenameVirtualInterfaceInNamespace renames the given interface
+func (nm *NM) RenameVirtualInterfaceInNamespace(name string, newname string, nsname string) (string, error) {
+	var r *interface{}
+	var err error
+	if nsname == "" {
+		r, err = nm.CallNMPluginFunction("rename_virtual_interface_in_namespace", map[string]interface{}{"name": name, "newname": newname})
+	} else {
+		r, err = nm.CallNMPluginFunction("rename_virtual_interface_in_namespace", map[string]interface{}{"name": name, "newname": newname, "nsname": nsname})
+	}
+	if err != nil {
+		return "", err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(string)
+		return sv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return "", &er
+	}
+}
+
+// AttachInterfaceToBridge attaches the given interface to the given bridge
+func (nm *NM) AttachInterfaceToBridge(intfName string, brName string) (*InterfaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("attach_interface_to_bridge", map[string]interface{}{"intf_name": intfName, "br_name": brName})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := InterfaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
+	}
+}
+
+// DetachInterfaceFromBridge detaches the interface from the current connected bridge
+func (nm *NM) DetachInterfaceFromBridge(intfName string) (*InterfaceInfo, error) {
+	r, err := nm.CallNMPluginFunction("detach_interface_from_bridge", map[string]interface{}{"intf_name": intfName})
+	if err != nil {
+		return nil, err
+	}
+
+	x := *r
+	switch bb := x.(type) {
+	case map[string]interface{}:
+		sv := x.(map[string]interface{})
+		jsv, err := json.Marshal(sv)
+		if err != nil {
+			return nil, err
+		}
+		ssv := InterfaceInfo{}
+		json.Unmarshal(jsv, &ssv)
+		return &ssv, nil
+	default:
+		er := FError{"Unexpected type: " + bb.(string), nil}
+		return nil, &er
 	}
 }
 
@@ -808,7 +1003,13 @@ func (nm *NM) DeleteVirtualInterfaceFromNamespace(intfName string, netns string)
 
 // AssignAddressToInterfaceInNamespace assigns the given address to the given interface in the the given network namespace, address are in the form AAA.AAA.AAA.AAA/NM
 func (nm *NM) AssignAddressToInterfaceInNamespace(intfName string, netns string, address string) (*NamespaceInfo, error) {
-	r, err := nm.CallNMPluginFunction("assign_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
+	var r *interface{}
+	var err error
+	if address == "" {
+		r, err = nm.CallNMPluginFunction("assign_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns})
+	} else {
+		r, err = nm.CallNMPluginFunction("assign_address_to_interface_in_namespace", map[string]interface{}{"intf_name": intfName, "nsname": netns, "address": address})
+	}
 	if err != nil {
 		return nil, err
 	}

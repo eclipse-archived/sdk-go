@@ -217,10 +217,12 @@ type Plugin struct {
 
 // InterfaceInfo represents the results of interface managements functions in the network manager plugin
 type InterfaceInfo struct {
-	Name string `json:"name"`
-	IPV4 string `json:"ipv4"`
-	IPV6 string `json:"ipv6"`
-	MAC  string `json:"mac"`
+	Name      string `json:"name"`
+	IPV4      string `json:"ipv4"`
+	IPV6      string `json:"ipv6"`
+	MAC       string `json:"mac"`
+	Namespace string `json:"namespace,omitempty"`
+	Bridge    string `json:"bridge,omitempty"`
 }
 
 // NamespaceInfo represents the results of network namespace managements functions in the network manager plugin
