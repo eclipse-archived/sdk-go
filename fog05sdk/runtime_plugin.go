@@ -108,7 +108,10 @@ func (rt *FOSRuntimePluginAbstract) WaitDestinationReady(fduid string, instancei
 
 // WaitDependencies waits that the Agent, OS and NM Plugins are up and gets those from YAKS
 func (rt *FOSRuntimePluginAbstract) WaitDependencies() {
-	rt.FOSPlugin.GetAgent()
+	for rt.FOSPlugin.Agent == nil {
+		rt.FOSPlugin.GetAgent()
+		time.Sleep(1 * time.Second)
+	}
 	for rt.FOSPlugin.OS == nil {
 		rt.FOSPlugin.GetOSPlugin()
 		time.Sleep(1 * time.Second)
