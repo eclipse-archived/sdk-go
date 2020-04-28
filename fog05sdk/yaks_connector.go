@@ -315,6 +315,59 @@ func (gad *GAD) GetFDUInstanceSelector(sysid string, tenantid string, instanceid
 	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "info"})
 }
 
+// GetFDUStartEvalSelector ...
+func (gad *GAD) GetFDUStartEvalSelector(sysid string, tenantid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "start", e})
+}
+
+// GetFDURunEvalSelector ...
+func (gad *GAD) GetFDURunEvalSelector(sysid string, tenantid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "run", e})
+}
+
+// GetFDULogEvalSelector ...
+func (gad *GAD) GetFDULogEvalSelector(sysid string, tenantid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "log"})
+}
+
+// GetFDULsEvalSelector ...
+func (gad *GAD) GetFDULsEvalSelector(sysid string, tenantid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "ls"})
+}
+
+// GetFDUFileEvalSelector ...
+func (gad *GAD) GetFDUFileEvalSelector(sysid string, tenantid string, instanceid string, filename string) *yaks.Selector {
+	f := fmt.Sprintf("?(filename=%s)", filename)
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "get", f})
+}
+
+// GetFDUStartEvalPath ...
+func (gad *GAD) GetFDUStartEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "start"})
+}
+
+// GetFDURunEvalPath ...
+func (gad *GAD) GetFDURunEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "run"})
+}
+
+// GetFDULogEvalPath ...
+func (gad *GAD) GetFDULogEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "log"})
+}
+
+// GetFDULsEvalPath ...
+func (gad *GAD) GetFDULsEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "ls"})
+}
+
+// GetFDUFileEvalPath ...
+func (gad *GAD) GetFDUFileEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "get"})
+}
+
 // Network
 
 // GetAllNetworksSelector ...
@@ -1888,6 +1941,96 @@ func (gad *GAD) DefineFDUInNode(sysid string, tenantid string, nodeid string, fd
 	return &sv, nil
 }
 
+// StartFDUInNode ...
+func (gad *GAD) StartFDUInNode(sysid string, tenantid string, instanceid string, env string) (*EvalResult, error) {
+
+	s := gad.GetFDUStartEvalSelector(sysid, tenantid, instanceid, env)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"StartFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// RunFDUInNode ...
+func (gad *GAD) RunFDUInNode(sysid string, tenantid string, instanceid string, env string) (*EvalResult, error) {
+
+	s := gad.GetFDURunEvalSelector(sysid, tenantid, instanceid, env)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"RunFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// LogFDUInNode ...
+func (gad *GAD) LogFDUInNode(sysid string, tenantid string, instanceid string) (*EvalResult, error) {
+
+	s := gad.GetFDULogEvalSelector(sysid, tenantid, instanceid)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"LogFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// LsFDUInNode ...
+func (gad *GAD) LsFDUInNode(sysid string, tenantid string, instanceid string) (*EvalResult, error) {
+
+	s := gad.GetFDULsEvalSelector(sysid, tenantid, instanceid)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"LsFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// GetFileFDUInNode ...
+func (gad *GAD) GetFileFDUInNode(sysid string, tenantid string, instanceid string, filename string) (*EvalResult, error) {
+
+	s := gad.GetFDUFileEvalSelector(sysid, tenantid, instanceid, filename)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"GetFileFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
 // CreateNetworkInNode ...
 func (gad *GAD) CreateNetworkInNode(sysid string, tenantid string, nodeid string, netid string, info VirtualNetwork) (*EvalResult, error) {
 
@@ -2068,6 +2211,59 @@ func (lad *LAD) GetNodeFDUInstanceSelector(nodeid string, instanceid string) *ya
 // GetNodeFDUIAllnstancesSelector ...
 func (lad *LAD) GetNodeFDUIAllnstancesSelector(nodeid string) *yaks.Selector {
 	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", "*", "info"})
+}
+
+// GetNoneFDUStartEvalSelector ...
+func (lad *LAD) GetNoneFDUStartEvalSelector(nodeid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "start", e})
+}
+
+// GetNodeFDURunEvalSelector ...
+func (lad *LAD) GetNodeFDURunEvalSelector(nodeid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "start", e})
+}
+
+// GetNodeFDULogEvalSelector ...
+func (lad *LAD) GetNodeFDULogEvalSelector(nodeid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "log"})
+}
+
+// GetNodeFDULsEvalSelector ...
+func (lad *LAD) GetNodeFDULsEvalSelector(nodeid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "ls"})
+}
+
+// GetNodeFDUFileEvalSelector ...
+func (lad *LAD) GetNodeFDUFileEvalSelector(nodeid string, instanceid string, filename string) *yaks.Selector {
+	f := fmt.Sprintf("?(filename=%s)", filename)
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "get", f})
+}
+
+// GetNodeFDUStartEvalPath ...
+func (lad *LAD) GetNodeFDUStartEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "start"})
+}
+
+// GetNodeFDURunEvalPath ...
+func (lad *LAD) GetNodeFDURunEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "run"})
+}
+
+// GetNodeFDULogEvalPath ...
+func (lad *LAD) GetNodeFDULogEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "log"})
+}
+
+// GetNodeFDULsEvalPath ...
+func (lad *LAD) GetNodeFDULsEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "ls"})
+}
+
+// GetNodeFDUFileEvalPath ...
+func (lad *LAD) GetNodeFDUFileEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "get"})
 }
 
 // Node Images
@@ -2293,6 +2489,152 @@ func (lad *LAD) AddPluginEval(nodeid string, pluginid string, funcname string, e
 	err := lad.ws.RegisterEval(s, cb)
 	lad.evals = append(lad.evals, s)
 	return err
+}
+
+// AddPluginFDUStartEval ...
+func (lad *LAD) AddPluginFDUStartEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(string) (interface{}, error)) error {
+	s := lad.GetNodeFDUStartEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+		env, found := props["env"]
+		if found {
+			v, err := evalcb(env)
+			if err != nil {
+				return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
+			}
+			yv, _ := json.Marshal(v)
+			sv := yaks.NewStringValue(string(yv))
+			return sv
+		}
+		return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"Missing parameter Env\""))
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDURunEval ...
+func (lad *LAD) AddPluginFDURunEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(string) (interface{}, error)) error {
+	s := lad.GetNodeFDURunEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+		env, found := props["env"]
+		if found {
+			v, err := evalcb(env)
+			if err != nil {
+				return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
+			}
+			yv, _ := json.Marshal(v)
+			sv := yaks.NewStringValue(string(yv))
+			return sv
+		}
+		return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"Missing parameter Env\""))
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDULogEval ...
+func (lad *LAD) AddPluginFDULogEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(interface{}) (interface{}, error)) error {
+	s := lad.GetNodeFDULogEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+
+		v, err := evalcb(nil)
+		if err != nil {
+			return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
+		}
+		yv, _ := json.Marshal(v)
+		sv := yaks.NewStringValue(string(yv))
+		return sv
+
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDULsEval ...
+func (lad *LAD) AddPluginFDULsEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(interface{}) (interface{}, error)) error {
+	s := lad.GetNodeFDULsEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+
+		v, err := evalcb(nil)
+		if err != nil {
+			return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
+		}
+		yv, _ := json.Marshal(v)
+		sv := yaks.NewStringValue(string(yv))
+		return sv
+
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDUFileEval ...
+func (lad *LAD) AddPluginFDUFileEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(string) (interface{}, error)) error {
+	s := lad.GetNodeFDUFileEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+		fName, found := props["filename"]
+		if found {
+			v, err := evalcb(fName)
+			if err != nil {
+				return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
+			}
+			yv, _ := json.Marshal(v)
+			sv := yaks.NewStringValue(string(yv))
+			return sv
+		}
+		return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"Missing parameter filename\""))
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// RemovePluginFDUStartEval ...
+func (lad *LAD) RemovePluginFDUStartEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDUStartEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDURunEval ...
+func (lad *LAD) RemovePluginFDURunEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDURunEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDULogEval ...
+func (lad *LAD) RemovePluginFDULogEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDULogEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDULsEval ...
+func (lad *LAD) RemovePluginFDULsEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDULsEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDUFileEval ...
+func (lad *LAD) RemovePluginFDUFileEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDUFileEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
 }
 
 // ExecAgentEval ...
