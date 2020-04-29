@@ -33,8 +33,11 @@ type FOSRuntimePluginInterface interface {
 	//CleanFDU cleans the given FDU instance
 	CleanFDU(string) error
 
-	//RunFDU starts the given FDU instance
-	RunFDU(string) error
+	//StartFDU starts the given FDU instance
+	StartFDU(string, *string) EvalResult
+
+	//RunFDU runs the given FDU instance
+	RunFDU(string, *string) EvalResult
 
 	//StopFDU stops the given FDU instance
 	StopFDU(string) error
@@ -50,6 +53,15 @@ type FOSRuntimePluginInterface interface {
 
 	//ResumeFDU resumes the given FDU instance
 	ResumeFDU(string) error
+
+	//GetLogFDU runs the given FDU instance
+	GetLogFDU(string, *string) EvalResult
+
+	//LsFDU runs the given FDU instance
+	LsFDU(string, *string) EvalResult
+
+	//GetFileFDU runs the given FDU instance
+	GetFileFDU(string, *string) EvalResult
 }
 
 // FOSRuntimePluginAbstract represents a Runtime Plugin for Eclipse fog05
