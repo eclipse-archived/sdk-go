@@ -208,8 +208,6 @@ func (rt *FOSRuntimePluginAbstract) react(info FDURecord) {
 		rt.CleanFDU(id)
 	case CONFIGURE:
 		rt.ConfigureFDU(id)
-	case RUN:
-		rt.RunFDU(id)
 	case STOP:
 		rt.StopFDU(id)
 	case PAUSE:
