@@ -2492,16 +2492,13 @@ func (lad *LAD) AddPluginEval(nodeid string, pluginid string, funcname string, e
 }
 
 // AddPluginFDUStartEval ...
-func (lad *LAD) AddPluginFDUStartEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(string) (interface{}, error)) error {
+func (lad *LAD) AddPluginFDUStartEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
 	s := lad.GetNodeFDUStartEvalPath(nodeid, pluginid, fduid, instanceid)
 
 	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
 		env, found := props["env"]
 		if found {
-			v, err := evalcb(env)
-			if err != nil {
-				return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
-			}
+			v := evalcb(&env)
 			yv, _ := json.Marshal(v)
 			sv := yaks.NewStringValue(string(yv))
 			return sv
@@ -2515,16 +2512,13 @@ func (lad *LAD) AddPluginFDUStartEval(nodeid string, pluginid string, fduid stri
 }
 
 // AddPluginFDURunEval ...
-func (lad *LAD) AddPluginFDURunEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(string) (interface{}, error)) error {
+func (lad *LAD) AddPluginFDURunEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
 	s := lad.GetNodeFDURunEvalPath(nodeid, pluginid, fduid, instanceid)
 
 	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
 		env, found := props["env"]
 		if found {
-			v, err := evalcb(env)
-			if err != nil {
-				return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
-			}
+			v := evalcb(&env)
 			yv, _ := json.Marshal(v)
 			sv := yaks.NewStringValue(string(yv))
 			return sv
@@ -2538,15 +2532,12 @@ func (lad *LAD) AddPluginFDURunEval(nodeid string, pluginid string, fduid string
 }
 
 // AddPluginFDULogEval ...
-func (lad *LAD) AddPluginFDULogEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(interface{}) (interface{}, error)) error {
+func (lad *LAD) AddPluginFDULogEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
 	s := lad.GetNodeFDULogEvalPath(nodeid, pluginid, fduid, instanceid)
 
 	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
 
-		v, err := evalcb(nil)
-		if err != nil {
-			return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
-		}
+		v := evalcb(nil)
 		yv, _ := json.Marshal(v)
 		sv := yaks.NewStringValue(string(yv))
 		return sv
@@ -2559,15 +2550,12 @@ func (lad *LAD) AddPluginFDULogEval(nodeid string, pluginid string, fduid string
 }
 
 // AddPluginFDULsEval ...
-func (lad *LAD) AddPluginFDULsEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(interface{}) (interface{}, error)) error {
+func (lad *LAD) AddPluginFDULsEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
 	s := lad.GetNodeFDULsEvalPath(nodeid, pluginid, fduid, instanceid)
 
 	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
 
-		v, err := evalcb(nil)
-		if err != nil {
-			return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
-		}
+		v := evalcb(nil)
 		yv, _ := json.Marshal(v)
 		sv := yaks.NewStringValue(string(yv))
 		return sv
@@ -2580,16 +2568,13 @@ func (lad *LAD) AddPluginFDULsEval(nodeid string, pluginid string, fduid string,
 }
 
 // AddPluginFDUFileEval ...
-func (lad *LAD) AddPluginFDUFileEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(string) (interface{}, error)) error {
+func (lad *LAD) AddPluginFDUFileEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
 	s := lad.GetNodeFDUFileEvalPath(nodeid, pluginid, fduid, instanceid)
 
 	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
 		fName, found := props["filename"]
 		if found {
-			v, err := evalcb(fName)
-			if err != nil {
-				return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"%s\"", err))
-			}
+			v := evalcb(&fName)
 			yv, _ := json.Marshal(v)
 			sv := yaks.NewStringValue(string(yv))
 			return sv
