@@ -16,6 +16,7 @@ package fog05sdk
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/atolab/yaks-go"
@@ -1717,12 +1718,50 @@ func (gad *GAD) AddNodePortToNetwork(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"AddNodePortToNetwork function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemoveNodePortFromNetwork ...
@@ -1740,12 +1779,50 @@ func (gad *GAD) RemoveNodePortFromNetwork(sysid string, tenantid string, nodeid 
 		return nil, &FError{"RemoveNodePortFromNetwork function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // CrateFloatingIPInNode ...
@@ -1760,12 +1837,50 @@ func (gad *GAD) CrateFloatingIPInNode(sysid string, tenantid string, nodeid stri
 		return nil, &FError{"CrateFloatingIPInNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemoveFloatingIPFromNode ...
@@ -1783,12 +1898,50 @@ func (gad *GAD) RemoveFloatingIPFromNode(sysid string, tenantid string, nodeid s
 		return nil, &FError{"RemoveFloatingIPFromNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // AssignNodeFloatingIP ...
@@ -1807,12 +1960,50 @@ func (gad *GAD) AssignNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"AssignNodeFloatingIP function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RetainNodeFloatingIP ...
@@ -1831,12 +2022,50 @@ func (gad *GAD) RetainNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"RetainNodeFloatingIP function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // AddPortToRouter ...
@@ -1861,12 +2090,50 @@ func (gad *GAD) AddPortToRouter(sysid string, tenantid string, nodeid string, ro
 		return nil, &FError{"AddPortToRouter function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemovePortFromRouter ...
@@ -1885,12 +2152,50 @@ func (gad *GAD) RemovePortFromRouter(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"RemovePortFromRouter function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // OnboardFDUFromNode ...
@@ -1910,12 +2215,50 @@ func (gad *GAD) OnboardFDUFromNode(sysid string, tenantid string, nodeid string,
 		return nil, &FError{"OnboardFDUFromNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err = json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err = json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // DefineFDUInNode ...
@@ -1933,12 +2276,50 @@ func (gad *GAD) DefineFDUInNode(sysid string, tenantid string, nodeid string, fd
 		return nil, &FError{"DefineFDUInNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // StartFDUInNode ...
@@ -2048,12 +2429,50 @@ func (gad *GAD) CreateNetworkInNode(sysid string, tenantid string, nodeid string
 		return nil, &FError{"CreateNetworkInNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err = json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err = json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemoveNetworkFromNode ...
@@ -2071,12 +2490,50 @@ func (gad *GAD) RemoveNetworkFromNode(sysid string, tenantid string, nodeid stri
 		return nil, &FError{"RemoveNetworkFromNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // LAD is Local Actual Desired
@@ -2637,12 +3094,50 @@ func (lad *LAD) ExecAgentEval(nodeid string, fname string, props map[string]inte
 		return nil, &FError{"ExecAgentEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // ExecOSEval ...
@@ -2660,12 +3155,50 @@ func (lad *LAD) ExecOSEval(nodeid string, fname string, props map[string]interfa
 		return nil, &FError{"ExecOSEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type:  " + (reflect.TypeOf(genericJSON["result"]).String()), nil}
+		return nil, &er
+	}
+
 }
 
 // ExecNMEval ...
@@ -2683,12 +3216,50 @@ func (lad *LAD) ExecNMEval(nodeid string, pluginid string, fname string, props m
 		return nil, &FError{"ExecNMEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // ExecPluginEval ...
@@ -2706,12 +3277,50 @@ func (lad *LAD) ExecPluginEval(nodeid string, pluginid string, fname string, pro
 		return nil, &FError{"ExecPluginEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // Node
