@@ -16,6 +16,7 @@ package fog05sdk
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/atolab/yaks-go"
@@ -313,6 +314,59 @@ func (gad *GAD) GetNodeFDUInstanceSelector(sysid string, tenantid string, nodeid
 // GetFDUInstanceSelector ...
 func (gad *GAD) GetFDUInstanceSelector(sysid string, tenantid string, instanceid string) *yaks.Selector {
 	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "info"})
+}
+
+// GetFDUStartEvalSelector ...
+func (gad *GAD) GetFDUStartEvalSelector(sysid string, tenantid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "start", e})
+}
+
+// GetFDURunEvalSelector ...
+func (gad *GAD) GetFDURunEvalSelector(sysid string, tenantid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "run", e})
+}
+
+// GetFDULogEvalSelector ...
+func (gad *GAD) GetFDULogEvalSelector(sysid string, tenantid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "log"})
+}
+
+// GetFDULsEvalSelector ...
+func (gad *GAD) GetFDULsEvalSelector(sysid string, tenantid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "ls"})
+}
+
+// GetFDUFileEvalSelector ...
+func (gad *GAD) GetFDUFileEvalSelector(sysid string, tenantid string, instanceid string, filename string) *yaks.Selector {
+	f := fmt.Sprintf("?(filename=%s)", filename)
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", "*", "fdu", "*", "instances", instanceid, "get", f})
+}
+
+// GetFDUStartEvalPath ...
+func (gad *GAD) GetFDUStartEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "start"})
+}
+
+// GetFDURunEvalPath ...
+func (gad *GAD) GetFDURunEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "run"})
+}
+
+// GetFDULogEvalPath ...
+func (gad *GAD) GetFDULogEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "log"})
+}
+
+// GetFDULsEvalPath ...
+func (gad *GAD) GetFDULsEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "ls"})
+}
+
+// GetFDUFileEvalPath ...
+func (gad *GAD) GetFDUFileEvalPath(sysid string, tenantid string, nodeid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "fdu", fduid, "instances", instanceid, "get"})
 }
 
 // Network
@@ -1664,12 +1718,50 @@ func (gad *GAD) AddNodePortToNetwork(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"AddNodePortToNetwork function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemoveNodePortFromNetwork ...
@@ -1687,12 +1779,50 @@ func (gad *GAD) RemoveNodePortFromNetwork(sysid string, tenantid string, nodeid 
 		return nil, &FError{"RemoveNodePortFromNetwork function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // CrateFloatingIPInNode ...
@@ -1707,12 +1837,50 @@ func (gad *GAD) CrateFloatingIPInNode(sysid string, tenantid string, nodeid stri
 		return nil, &FError{"CrateFloatingIPInNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemoveFloatingIPFromNode ...
@@ -1730,12 +1898,50 @@ func (gad *GAD) RemoveFloatingIPFromNode(sysid string, tenantid string, nodeid s
 		return nil, &FError{"RemoveFloatingIPFromNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // AssignNodeFloatingIP ...
@@ -1754,12 +1960,50 @@ func (gad *GAD) AssignNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"AssignNodeFloatingIP function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RetainNodeFloatingIP ...
@@ -1778,12 +2022,50 @@ func (gad *GAD) RetainNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"RetainNodeFloatingIP function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // AddPortToRouter ...
@@ -1808,12 +2090,50 @@ func (gad *GAD) AddPortToRouter(sysid string, tenantid string, nodeid string, ro
 		return nil, &FError{"AddPortToRouter function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemovePortFromRouter ...
@@ -1832,12 +2152,50 @@ func (gad *GAD) RemovePortFromRouter(sysid string, tenantid string, nodeid strin
 		return nil, &FError{"RemovePortFromRouter function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // OnboardFDUFromNode ...
@@ -1857,12 +2215,50 @@ func (gad *GAD) OnboardFDUFromNode(sysid string, tenantid string, nodeid string,
 		return nil, &FError{"OnboardFDUFromNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err = json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err = json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // DefineFDUInNode ...
@@ -1878,6 +2274,134 @@ func (gad *GAD) DefineFDUInNode(sysid string, tenantid string, nodeid string, fd
 	kvs := gad.ws.Get(s)
 	if len(kvs) == 0 {
 		return nil, &FError{"DefineFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
+	if err != nil {
+		return nil, err
+	}
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
+}
+
+// StartFDUInNode ...
+func (gad *GAD) StartFDUInNode(sysid string, tenantid string, instanceid string, env string) (*EvalResult, error) {
+
+	s := gad.GetFDUStartEvalSelector(sysid, tenantid, instanceid, env)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"StartFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// RunFDUInNode ...
+func (gad *GAD) RunFDUInNode(sysid string, tenantid string, instanceid string, env string) (*EvalResult, error) {
+
+	s := gad.GetFDURunEvalSelector(sysid, tenantid, instanceid, env)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"RunFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// LogFDUInNode ...
+func (gad *GAD) LogFDUInNode(sysid string, tenantid string, instanceid string) (*EvalResult, error) {
+
+	s := gad.GetFDULogEvalSelector(sysid, tenantid, instanceid)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"LogFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// LsFDUInNode ...
+func (gad *GAD) LsFDUInNode(sysid string, tenantid string, instanceid string) (*EvalResult, error) {
+
+	s := gad.GetFDULsEvalSelector(sysid, tenantid, instanceid)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"LsFDUInNode function replied nil", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EvalResult{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// GetFileFDUInNode ...
+func (gad *GAD) GetFileFDUInNode(sysid string, tenantid string, instanceid string, filename string) (*EvalResult, error) {
+
+	s := gad.GetFDUFileEvalSelector(sysid, tenantid, instanceid, filename)
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"GetFileFDUInNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
 	sv := EvalResult{}
@@ -1905,12 +2429,50 @@ func (gad *GAD) CreateNetworkInNode(sysid string, tenantid string, nodeid string
 		return nil, &FError{"CreateNetworkInNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err = json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err = json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // RemoveNetworkFromNode ...
@@ -1928,12 +2490,50 @@ func (gad *GAD) RemoveNetworkFromNode(sysid string, tenantid string, nodeid stri
 		return nil, &FError{"RemoveNetworkFromNode function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // LAD is Local Actual Desired
@@ -2068,6 +2668,59 @@ func (lad *LAD) GetNodeFDUInstanceSelector(nodeid string, instanceid string) *ya
 // GetNodeFDUIAllnstancesSelector ...
 func (lad *LAD) GetNodeFDUIAllnstancesSelector(nodeid string) *yaks.Selector {
 	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", "*", "info"})
+}
+
+// GetNoneFDUStartEvalSelector ...
+func (lad *LAD) GetNoneFDUStartEvalSelector(nodeid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "start", e})
+}
+
+// GetNodeFDURunEvalSelector ...
+func (lad *LAD) GetNodeFDURunEvalSelector(nodeid string, instanceid string, env string) *yaks.Selector {
+	e := fmt.Sprintf("?(env=%s)", env)
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "start", e})
+}
+
+// GetNodeFDULogEvalSelector ...
+func (lad *LAD) GetNodeFDULogEvalSelector(nodeid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "log"})
+}
+
+// GetNodeFDULsEvalSelector ...
+func (lad *LAD) GetNodeFDULsEvalSelector(nodeid string, instanceid string) *yaks.Selector {
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "ls"})
+}
+
+// GetNodeFDUFileEvalSelector ...
+func (lad *LAD) GetNodeFDUFileEvalSelector(nodeid string, instanceid string, filename string) *yaks.Selector {
+	f := fmt.Sprintf("?(filename=%s)", filename)
+	return CreateSelector([]string{lad.prefix, nodeid, "runtimes", "*", "fdu", "*", "instances", instanceid, "get", f})
+}
+
+// GetNodeFDUStartEvalPath ...
+func (lad *LAD) GetNodeFDUStartEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "start"})
+}
+
+// GetNodeFDURunEvalPath ...
+func (lad *LAD) GetNodeFDURunEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "run"})
+}
+
+// GetNodeFDULogEvalPath ...
+func (lad *LAD) GetNodeFDULogEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "log"})
+}
+
+// GetNodeFDULsEvalPath ...
+func (lad *LAD) GetNodeFDULsEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "ls"})
+}
+
+// GetNodeFDUFileEvalPath ...
+func (lad *LAD) GetNodeFDUFileEvalPath(nodeid string, pluginid string, fduid string, instanceid string) *yaks.Path {
+	return CreatePath([]string{lad.prefix, nodeid, "runtimes", pluginid, "fdu", fduid, "instances", instanceid, "get"})
 }
 
 // Node Images
@@ -2295,6 +2948,137 @@ func (lad *LAD) AddPluginEval(nodeid string, pluginid string, funcname string, e
 	return err
 }
 
+// AddPluginFDUStartEval ...
+func (lad *LAD) AddPluginFDUStartEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
+	s := lad.GetNodeFDUStartEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+		env, found := props["env"]
+		if found {
+			v := evalcb(&env)
+			yv, _ := json.Marshal(v)
+			sv := yaks.NewStringValue(string(yv))
+			return sv
+		}
+		return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"Missing parameter Env\""))
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDURunEval ...
+func (lad *LAD) AddPluginFDURunEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
+	s := lad.GetNodeFDURunEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+		env, found := props["env"]
+		if found {
+			v := evalcb(&env)
+			yv, _ := json.Marshal(v)
+			sv := yaks.NewStringValue(string(yv))
+			return sv
+		}
+		return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"Missing parameter Env\""))
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDULogEval ...
+func (lad *LAD) AddPluginFDULogEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
+	s := lad.GetNodeFDULogEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+
+		v := evalcb(nil)
+		yv, _ := json.Marshal(v)
+		sv := yaks.NewStringValue(string(yv))
+		return sv
+
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDULsEval ...
+func (lad *LAD) AddPluginFDULsEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
+	s := lad.GetNodeFDULsEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+
+		v := evalcb(nil)
+		yv, _ := json.Marshal(v)
+		sv := yaks.NewStringValue(string(yv))
+		return sv
+
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// AddPluginFDUFileEval ...
+func (lad *LAD) AddPluginFDUFileEval(nodeid string, pluginid string, fduid string, instanceid string, evalcb func(*string) EvalResult) error {
+	s := lad.GetNodeFDUFileEvalPath(nodeid, pluginid, fduid, instanceid)
+
+	cb := func(path *yaks.Path, props yaks.Properties) yaks.Value {
+		fName, found := props["filename"]
+		if found {
+			v := evalcb(&fName)
+			yv, _ := json.Marshal(v)
+			sv := yaks.NewStringValue(string(yv))
+			return sv
+		}
+		return yaks.NewStringValue(fmt.Sprintf("{\"error\":\"Missing parameter filename\""))
+	}
+
+	err := lad.ws.RegisterEval(s, cb)
+	lad.evals = append(lad.evals, s)
+	return err
+}
+
+// RemovePluginFDUStartEval ...
+func (lad *LAD) RemovePluginFDUStartEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDUStartEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDURunEval ...
+func (lad *LAD) RemovePluginFDURunEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDURunEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDULogEval ...
+func (lad *LAD) RemovePluginFDULogEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDULogEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDULsEval ...
+func (lad *LAD) RemovePluginFDULsEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDULsEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
+// RemovePluginFDUFileEval ...
+func (lad *LAD) RemovePluginFDUFileEval(nodeid string, pluginid string, fduid string, instanceid string) error {
+	s := lad.GetNodeFDUFileEvalPath(nodeid, pluginid, fduid, instanceid)
+	r := lad.ws.UnregisterEval(s)
+	return r
+}
+
 // ExecAgentEval ...
 func (lad *LAD) ExecAgentEval(nodeid string, fname string, props map[string]interface{}) (*EvalResult, error) {
 
@@ -2310,12 +3094,50 @@ func (lad *LAD) ExecAgentEval(nodeid string, fname string, props map[string]inte
 		return nil, &FError{"ExecAgentEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // ExecOSEval ...
@@ -2333,12 +3155,50 @@ func (lad *LAD) ExecOSEval(nodeid string, fname string, props map[string]interfa
 		return nil, &FError{"ExecOSEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type:  " + (reflect.TypeOf(genericJSON["result"]).String()), nil}
+		return nil, &er
+	}
+
 }
 
 // ExecNMEval ...
@@ -2356,12 +3216,50 @@ func (lad *LAD) ExecNMEval(nodeid string, pluginid string, fname string, props m
 		return nil, &FError{"ExecNMEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // ExecPluginEval ...
@@ -2379,12 +3277,50 @@ func (lad *LAD) ExecPluginEval(nodeid string, pluginid string, fname string, pro
 		return nil, &FError{"ExecPluginEval function replied nil", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := EvalResult{}
-	err := json.Unmarshal([]byte(v), &sv)
+
+	var genericJSON map[string]interface{}
+	err := json.Unmarshal([]byte(v), &genericJSON)
 	if err != nil {
 		return nil, err
 	}
-	return &sv, nil
+
+	switch t := genericJSON["result"].(type) {
+
+	case map[string]interface{}:
+		msi := genericJSON["result"].(map[string]interface{})
+		js, err := json.Marshal(msi)
+		if err != nil {
+			return nil, err
+		}
+		s := string(js)
+		genericJSON["result"] = s
+
+		evjs, err := json.Marshal(genericJSON)
+		if err != nil {
+			return nil, err
+		}
+		evs := string(evjs)
+
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(evs), &sv)
+		if err != nil {
+			return nil, err
+		}
+
+		return &sv, nil
+
+	case string:
+		sv := EvalResult{}
+		err = json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return nil, err
+		}
+		return &sv, nil
+	default:
+		er := FError{"Unexpected type: " + t.(string), nil}
+		return nil, &er
+	}
+
 }
 
 // Node

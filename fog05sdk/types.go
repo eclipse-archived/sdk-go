@@ -234,7 +234,7 @@ type NamespaceInfo struct {
 
 // EvalResult represents results of Eval
 type EvalResult struct {
-	Result       *interface{} `json:"result,omitempty"`
-	Error        *int         `json:"error,omitempty"`
-	ErrorMessage *string      `json:"error_msg,omitempty"`
+	Result       *string `json:"result,omitempty"`
+	Error        *int    `json:"error,omitempty"`
+	ErrorMessage *string `json:"error_msg,omitempty"`
 }
