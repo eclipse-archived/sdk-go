@@ -673,3 +673,8 @@ func NewFOrcEZConnector(locator string, sysid string, tenantid string) (*FOrcEZC
 
 	return &FOrcEZConnector{ws: ws, Orchestrator: o, zadmin: ad, zclient: z}, nil
 }
+
+// Close closes the connector
+func (fzc *FOrcEZConnector) Close() error {
+	return fzc.zclient.Logout()
+}
