@@ -14,74 +14,89 @@
 package fog05sdk
 
 const (
-	// FIM is FIM EntityKind
-	FIM string = "FIM"
 
-	// CLOUD is CLOUD EntityKind
-	CLOUD string = "CLOUD"
+	//ONBOARDING is Entity status
+	ONBOARDING string = "ONBOARDING"
 
-	// CPU is ScalingMetric
-	CPU string = "CPU"
+	//ONBOARDED is Entity status
+	ONBOARDED string = "ONBOARDED"
 
-	//MEMORY is ScalingMetric
-	MEMORY string = "MEMORY"
+	//STARTING is Entity status
+	//STARTING string = "STARTING"
 
-	//DISK is ScalingMetric
-	DISK string = "DISK"
+	//RUNNING is Entity status
+	RUNNING string = "RUNNING"
 
-	//CUSTOM is ScalingMetric
-	CUSTOM string = "CUSTOM"
+	//STOPPING is Entity status
+	STOPPING string = "STOPPING"
+
+	//STOPPED is Entity status
+	STOPPED string = "STOPPED"
+
+	//OFFLOADING is Entity status
+	OFFLOADING string = "OFFLOADING"
+
+	//OFFLOADED is Entity status
+	OFFLOADED string = "OFFLOADED"
+
+	//INVALID is Entity status
+	INVALID string = "INVALID"
+
+	//ERROR is Entity status
+	//ERROR string = "ERROR"
+
+	//RECOVERING is Entity status
+	RECOVERING string = "RECOVERING"
+
+	//L2 is L2 link kind (default) Multicast VXLAN
+	L2 string = "L2"
+
+	//L3 is L3 link kind (tree-based GRE)
+	L3 string = "L3"
+
+	// ELINE is Point-to-Point VXLAN
+	ELINE string = "ELINE"
+
+	// ELAN is ELAN multicast VXLAN
+	ELAN string = "ELAN"
 )
 
-// ScalingPolicy represents a scaling policy
-type ScalingPolicy struct {
-	Metric               string  `json:"metric"`
-	ScaleUpThreshold     float32 `json:"scale_up_threshold"`
-	ScaleDownThreshold   float32 `json:"scale_down_threshold"`
-	ThresholdSensibility float32 `json:"threshold_sensibility"`
-	MinReplicas          uint8   `json:"min_replicas"`
-	MaxReplicas          uint8   `json:"max_replicas`
-	FDUID                string  `json:"fdu_id"`
+// IPConfiguration represent the IP Configuration
+type IPConfiguration struct {
+	Subnet    *string `json:"subnet,omitempty"`
+	Gateway   *string `json:"gateway,omitempty"`
+	DHCPRange *string `json:"dhcp_range,omitempty"`
+	DNS       *string `json:"dns,omitempty"`
 }
 
-// ConstituentFDU is an FDU composing the entity
-type ConstituentFDU struct {
-	ID    string `json:"id"`
-	Index uint8  `json:"index"`
-}
-
-// ConstituentFDU is an FDU composing the entity instance
-type ConstituentRecordFDU struct {
-	ID    string `json:"id"`
-	UUID  string `json:"uuid"`
-	Index uint8  `json:"index"`
-}
-
-// ConstituentVirtualLinkRecord is an virtual link composing the entity instance
-type ConstituentVirtualLinkRecord struct {
-	ID   string `json:"id"`
-	UUID string `json:"uuid"`
+// VirtualLinkDescriptor represent a Virtual Link
+type VirtualLinkDescriptor struct {
+	UUID            *string          `json:"uuid,omitempty`
+	ID              string           `json:"id"`
+	Name            *string          `json:"name,omitempty"`
+	IsMgmt          bool             `json:"is_mgmt"`
+	LinkKind        string           `json:"link_kind"`
+	IPVersion       string           `json:"ip_version"`
+	IPConfiguration *IPConfiguration `json:"ip_configuration,omitempty"`
 }
 
 // EntityDescriptor represent an Entity descriptor
 type EntityDescriptor struct {
-	UUID            *string           `json:"uuid,omitempty"`
-	ID              string            `json:"id"`
-	Version         string            `json:"version"`
-	EntityVersion   string            `json:"entity_version"`
-	Kind            string            `json:"kind"`
-	Description     *string           `json:"description,omitempty`
-	FDUs            *[]ConstituentFDU `json:"fdus,omitempty"`
-	ScalingPolicies *[]ScalingPolicy  `json:"scaling_policies,omitempty`
-	VirtualLinks    *[]VirtualNetwork `json:"virtual_links,omitempty"`
-	CloudDescriptor *string           `json:"cloud_descriptor"`
+	UUID          *string          `json:"uuid,omitempty"`
+	ID            string           `json:"id"`
+	Name          *string          `json:"name,omitempty"`
+	Version       string           `json:"version"`
+	EntityVersion string           `json:"entity_version"`
+	Description   *string          `json:"description,omitempty"`
+	FDUs          []FDU            `json:"fdus"`
+	VirtualLinks  []VirtualNetwork `json:"virtual_links"`
 }
 
 // EntityRecord represent an Enitity instance record
 type EntityRecord struct {
-	UUID         string                          `json:"uuid"`
-	ID           string                          `json:"id"`
-	FDUs         *[]ConstituentRecordFDU         `json:"fdus,omitempty"`
-	VirtualLinks *[]ConstituentVirtualLinkRecord `json:"virtual_links,omitempy`
-	CloudRecord  *string                         `json:"cloud_record,omitempy"`
+	UUID         string   `json:"uuid"`
+	ID           string   `json:"id"`
+	Status       string   `json:"status"`
+	FDUs         []string `json:"fdus"`
+	VirtualLinks []string `json:"virtual_links"`
 }

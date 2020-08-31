@@ -190,16 +190,6 @@ func (gad *GAD) GetTenantConfigurationPath(sysid string, tenantid string) *yaks.
 
 // Catalog
 
-// GetCatalogAtomicEntityInfoPath ...
-func (gad *GAD) GetCatalogAtomicEntityInfoPath(sysid string, tenantid string, aeid string) *yaks.Path {
-	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "catalog", "atomic-entities", aeid, "info"})
-}
-
-// GetCatalogAllAtomicEntitiesSelector ...
-func (gad *GAD) GetCatalogAllAtomicEntitiesSelector(sysid string, tenantid string) *yaks.Selector {
-	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "catalog", "atomic-entities", "*", "info"})
-}
-
 // GetCatalogFDUInfoPath ...
 func (gad *GAD) GetCatalogFDUInfoPath(sysid string, tenantid string, fduid string) *yaks.Path {
 	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "catalog", "fdu", fduid, "info"})
@@ -221,21 +211,6 @@ func (gad *GAD) GetCatalogAllEntitiesSelector(sysid string, tenantid string) *ya
 }
 
 // Records
-
-// GetRecordsAtomicEntityInstanceInfoPath ...
-func (gad *GAD) GetRecordsAtomicEntityInstanceInfoPath(sysid string, tenantid string, aeid string, instanceid string) *yaks.Path {
-	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "records", "atomic-entities", aeid, "instances", instanceid, "info"})
-}
-
-// GetRecordsAllAtomicEntityInstancesSelector ...
-func (gad *GAD) GetRecordsAllAtomicEntityInstancesSelector(sysid string, tenantid string, aeid string) *yaks.Selector {
-	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "records", "atomic-entities", aeid, "instances", "*", "info"})
-}
-
-// GetRecordsAllAtomicEntitiesInstancesSelector ...
-func (gad *GAD) GetRecordsAllAtomicEntitiesInstancesSelector(sysid string, tenantid string) *yaks.Selector {
-	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "records", "atomic-entities", "*", "instances", "*", "info"})
-}
 
 // GetRecordsEntityInstanceInfoPath ...
 func (gad *GAD) GetRecordsEntityInstanceInfoPath(sysid string, tenantid string, eid string, instanceid string) *yaks.Path {

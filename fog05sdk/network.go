@@ -25,8 +25,8 @@ type Couple struct {
 const (
 	VPORT string = "VPORT"
 
-	ELINE string = "ELINE"
-	ELAN  string = "ELAN"
+	// ELINE string = "ELINE"
+	// ELAN  string = "ELAN"
 
 	IPV6 string = "IPV6"
 	IPV4 string = "IPV4"
