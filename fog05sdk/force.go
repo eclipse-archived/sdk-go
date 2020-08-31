@@ -671,5 +671,5 @@ func NewFOrcEZConnector(locator string, sysid string, tenantid string) (*FOrcEZC
 
 	o := NewFOrchestrator(ws, p)
 
-	return &ZConnector{ws: ws, Orchestrator: o, zadmin: ad, zclient: z}, nil
+	return &FOrcEZConnector{ws: ws, Orchestrator: o, zadmin: ad, zclient: z}, nil
 }
