@@ -82,14 +82,14 @@ type VirtualLinkDescriptor struct {
 
 // EntityDescriptor represent an Entity descriptor
 type EntityDescriptor struct {
-	UUID          *string          `json:"uuid,omitempty"`
-	ID            string           `json:"id"`
-	Name          *string          `json:"name,omitempty"`
-	Version       string           `json:"version"`
-	EntityVersion string           `json:"entity_version"`
-	Description   *string          `json:"description,omitempty"`
-	FDUs          []FDU            `json:"fdus"`
-	VirtualLinks  []VirtualNetwork `json:"virtual_links"`
+	UUID          *string                 `json:"uuid,omitempty"`
+	ID            string                  `json:"id"`
+	Name          *string                 `json:"name,omitempty"`
+	Version       string                  `json:"version"`
+	EntityVersion string                  `json:"entity_version"`
+	Description   *string                 `json:"description,omitempty"`
+	FDUs          []FOrCEFDUDescriptor    `json:"fdus"`
+	VirtualLinks  []VirtualLinkDescriptor `json:"virtual_links"`
 }
 
 // EntityRecord represent an Enitity instance record
