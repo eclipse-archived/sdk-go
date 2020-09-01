@@ -254,7 +254,7 @@ func (fo *FOrchestrator) GetJobInfo(jobid string) (*Job, error) {
 
 //RemoveJobInfo ...
 func (fo *FOrchestrator) RemoveJobInfo(jobid string) error {
-	s, _ := yaks.NewSelector(fo.GetJobInfoPath(jobid).ToString())
+	s := fo.GetJobInfoPath(jobid)
 	err := fo.ws.Remove(s)
 	return err
 }
