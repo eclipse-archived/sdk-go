@@ -34,6 +34,7 @@ type Job struct {
 	OriginalSender string `json:"original_sender"`
 	JobKind        string `json:"kind"`
 	Body           string `json:"body"`
+	Status         string `json:"status"`
 }
 
 // RequestNewJobMessage represents a request to do a new job for the orchestrator
