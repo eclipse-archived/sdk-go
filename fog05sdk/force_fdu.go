@@ -80,11 +80,19 @@ type FOrcEFDUVirtualInterface struct {
 
 // FOrcEFDUInterfaceDescriptor represent and FDU Network Interface descriptor
 type FOrcEFDUInterfaceDescriptor struct {
-	Name             string              `json:"name"`
-	Kind             string              `json:"kind"`
-	MACAddress       *string             `json:"mac_address,omitempty"`
-	VirtualInterface FDUVirtualInterface `json:"virtual_interface"`
-	CPID             *string             `json:"cp_id,omitempty"`
+	Name             string                   `json:"name"`
+	Kind             string                   `json:"kind"`
+	MACAddress       *string                  `json:"mac_address,omitempty"`
+	VirtualInterface FOrcEFDUVirtualInterface `json:"virtual_interface"`
+	CPID             *string                  `json:"cp_id,omitempty"`
+}
+
+// FOrcEConnectionPointDescriptor represents a Connection Point
+type FOrcEConnectionPointDescriptor struct {
+	UUID   *string `json:"uuid,omitempty"`
+	Name   string  `json:"name"`
+	ID     string  `json:"id"`
+	VLDRef string  `json:"vld_ref"`
 }
 
 // FOrcEFDUStorageDescriptor represents an FDU Storage Descriptor
@@ -111,7 +119,7 @@ type FOrCEFDUDescriptor struct {
 	GeographicalRequirements *FDUGeographicalRequirements      `json:"geographical_requirements,omitempty"`
 	Interfaces               []FOrcEFDUInterfaceDescriptor     `json:"interfaces"`
 	Storage                  []FOrcEFDUStorageDescriptor       `json:"storage"`
-	ConnectionPoints         []ConnectionPointDescriptor       `json:"connection_points"`
+	ConnectionPoints         []FOrcEConnectionPointDescriptor  `json:"connection_points"`
 	Configuration            *FOrCEFDUConfiguration            `json:"configuration,omitempty"`
 	MigrationKind            string                            `json:"migration_kind"`
 	ScalingPolicies          *[]ScalingPolicy                  `json:"scaling_policies,omitempty"`

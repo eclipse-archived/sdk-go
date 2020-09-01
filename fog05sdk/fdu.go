@@ -126,7 +126,7 @@ type FDUImage struct {
 	UUID     *string `json:"uuid,omitempty"`
 	Name     *string `json:"name,omitempty"`
 	URI      string  `json:"uri"`
-	Checksum string  `json:"checksum"` //SHA1SUM
+	Checksum string  `json:"checksum"` //SHA256SUM
 	Format   string  `json:"format"`
 }
 
