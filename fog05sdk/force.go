@@ -224,6 +224,41 @@ func (fo *FOrchestrator) ExtractFDUInstanceID(path *yaks.Path) string {
 
 // Get/Put/Subscribe/Evals
 
+// AddJobInfo ...
+func (fo *FOrchestrator) AddJobInfo(info Job) error {
+	s := fo.GetJobInfoPath(info.JobID)
+	v, err := json.Marshal(info)
+	if err != nil {
+		return err
+	}
+	sv := yaks.NewStringValue(string(v))
+	err = fo.ws.Put(s, sv)
+	return err
+}
+
+//GetJobInfo ...
+func (fo *FOrchestrator) GetJobInfo(jobid string) (*Job, error) {
+	s, _ := yaks.NewSelector(fo.GetJobInfoPath(jobid).ToString())
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"Entity not found", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := Job{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+//RemoveJobInfo ...
+func (fo *FOrchestrator) RemoveJobInfo(jobid string) error {
+	s, _ := yaks.NewSelector(fo.GetJobInfoPath(jobid).ToString())
+	err := fo.ws.Remove(s)
+	return err
+}
+
 // GetEntityInfo ...
 func (fo *FOrchestrator) GetEntityInfo(fduid string) (*EntityDescriptor, error) {
 	s, _ := yaks.NewSelector(fo.GetEntityPath(fduid).ToString())
