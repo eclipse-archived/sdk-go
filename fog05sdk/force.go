@@ -497,14 +497,14 @@ func (fo *FOrchestrator) ObserveVirtualLinks(listener func(VirtualLinkDescriptor
 }
 
 // GetFDUInfo ...
-func (fo *FOrchestrator) GetFDUInfo(fduid string) (*FOrCEFDUDescriptor, error) {
+func (fo *FOrchestrator) GetFDUInfo(fduid string) (*FOrcEFDUDescriptor, error) {
 	s, _ := yaks.NewSelector(fo.GetFDUPath(fduid).ToString())
 	kvs := fo.ws.Get(s)
 	if len(kvs) == 0 {
 		return nil, &FError{"FDU not found", nil}
 	}
 	v := kvs[0].Value().ToString()
-	sv := FOrCEFDUDescriptor{}
+	sv := FOrcEFDUDescriptor{}
 	err := json.Unmarshal([]byte(v), &sv)
 	if err != nil {
 		return nil, err
@@ -513,16 +513,16 @@ func (fo *FOrchestrator) GetFDUInfo(fduid string) (*FOrCEFDUDescriptor, error) {
 }
 
 // GetAllFDUsInfo ...
-func (fo *FOrchestrator) GetAllFDUsInfo() ([]FOrCEFDUDescriptor, error) {
+func (fo *FOrchestrator) GetAllFDUsInfo() ([]FOrcEFDUDescriptor, error) {
 	s := fo.GetAllFDUsSelector()
 	kvs := fo.ws.Get(s)
 	if len(kvs) == 0 {
-		return []FOrCEFDUDescriptor{}, &FError{"No entities found", nil}
+		return []FOrcEFDUDescriptor{}, &FError{"No entities found", nil}
 	}
-	var entities []FOrCEFDUDescriptor = []FOrCEFDUDescriptor{}
+	var entities []FOrcEFDUDescriptor = []FOrcEFDUDescriptor{}
 	for _, kv := range kvs {
 		v := kv.Value().ToString()
-		sv := FOrCEFDUDescriptor{}
+		sv := FOrcEFDUDescriptor{}
 		err := json.Unmarshal([]byte(v), &sv)
 		if err != nil {
 			return entities, err
@@ -533,7 +533,7 @@ func (fo *FOrchestrator) GetAllFDUsInfo() ([]FOrCEFDUDescriptor, error) {
 }
 
 // AddFDUInfo ...
-func (fo *FOrchestrator) AddFDUInfo(info FOrCEFDUDescriptor) error {
+func (fo *FOrchestrator) AddFDUInfo(info FOrcEFDUDescriptor) error {
 	s := fo.GetFDUPath(*info.UUID)
 	v, err := json.Marshal(info)
 	if err != nil {
@@ -552,13 +552,13 @@ func (fo *FOrchestrator) RemoveFDUInfo(fduid string) error {
 }
 
 // ObserveFDUs ...
-func (fo *FOrchestrator) ObserveFDUs(listener func(FOrCEFDUDescriptor)) (*yaks.SubscriptionID, error) {
+func (fo *FOrchestrator) ObserveFDUs(listener func(FOrcEFDUDescriptor)) (*yaks.SubscriptionID, error) {
 	s := fo.GetAllFDUsSelector()
 
 	cb := func(kvs []yaks.Change) {
 		if len(kvs) > 0 {
 			v := kvs[0].Value().ToString()
-			sv := FOrCEFDUDescriptor{}
+			sv := FOrcEFDUDescriptor{}
 			err := json.Unmarshal([]byte(v), &sv)
 			if err != nil {
 				panic(err.Error())

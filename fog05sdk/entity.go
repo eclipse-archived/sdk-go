@@ -88,7 +88,7 @@ type EntityDescriptor struct {
 	Version       string                  `json:"version"`
 	EntityVersion string                  `json:"entity_version"`
 	Description   *string                 `json:"description,omitempty"`
-	FDUs          []FOrCEFDUDescriptor    `json:"fdus"`
+	FDUs          []FOrcEFDUDescriptor    `json:"fdus"`
 	VirtualLinks  []VirtualLinkDescriptor `json:"virtual_links"`
 }
 
