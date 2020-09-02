@@ -49,8 +49,8 @@ type ScalingPolicy struct {
 	MaxReplicas          uint8   `json:"max_replicas"`
 }
 
-// FOrCEFDUComputationalRequirements represents the FDU Computational Requirements aka Flavor for FOrCE
-type FOrCEFDUComputationalRequirements struct {
+// FOrcEFDUComputationalRequirements represents the FDU Computational Requirements aka Flavor for FOrcE
+type FOrcEFDUComputationalRequirements struct {
 	Name            *string `json:"name,omitempty"`
 	UUID            *string `json:"uuid,omitempty"`
 	CPUArch         string  `json:"cpu_arch"`
@@ -63,8 +63,8 @@ type FOrCEFDUComputationalRequirements struct {
 	// DutyCycle       *float64 `json:"duty_cycle,omitempty"`
 }
 
-// FOrCEFDUConfiguration represents the FDU Configuration
-type FOrCEFDUConfiguration struct {
+// FOrcEFDUConfiguration represents the FDU Configuration
+type FOrcEFDUConfiguration struct {
 	ConfType string    `json:"conf_type"`
 	Script   *string   `json:"script,omitempty"`
 	Env      *[]string `json:"env,omitempty"` //[VAR=VALUE,VAR2=VALUE2,...]
@@ -104,8 +104,8 @@ type FOrcEFDUStorageDescriptor struct {
 	// CPID               *string `json:"cp_id,omitempty"`
 }
 
-// FOrCEFDUDescriptor represent and FDU descriptor
-type FOrCEFDUDescriptor struct {
+// FOrcEFDUDescriptor represent and FDU descriptor
+type FOrcEFDUDescriptor struct {
 	UUID                     *string                           `json:"uuid,omitempty"`
 	ID                       string                            `json:"id"`
 	Name                     string                            `json:"name"`
@@ -115,12 +115,12 @@ type FOrCEFDUDescriptor struct {
 	Hypervisor               string                            `json:"hypervisor"`
 	Image                    *FDUImage                         `json:"image,omitempty"`
 	HypervisorSpecific       *string                           `json:"hypervisor_specific,omitempty"`
-	ComputationRequirements  FOrCEFDUComputationalRequirements `json:"computation_requirements"`
+	ComputationRequirements  FOrcEFDUComputationalRequirements `json:"computation_requirements"`
 	GeographicalRequirements *FDUGeographicalRequirements      `json:"geographical_requirements,omitempty"`
 	Interfaces               []FOrcEFDUInterfaceDescriptor     `json:"interfaces"`
 	Storage                  []FOrcEFDUStorageDescriptor       `json:"storage"`
 	ConnectionPoints         []FOrcEConnectionPointDescriptor  `json:"connection_points"`
-	Configuration            *FOrCEFDUConfiguration            `json:"configuration,omitempty"`
+	Configuration            *FOrcEFDUConfiguration            `json:"configuration,omitempty"`
 	MigrationKind            string                            `json:"migration_kind"`
 	ScalingPolicies          *[]ScalingPolicy                  `json:"scaling_policies,omitempty"`
 	DependsOn                []string                          `json:"depends_on"`
@@ -129,7 +129,7 @@ type FOrCEFDUDescriptor struct {
 //FOrcEFDURecord represent a record
 type FOrcEFDURecord struct {
 	UUID   string `json:"uuid"`
-	ID     string `json:"id"` //ref to FOrCEFDUDescriptor.UUID
+	ID     string `json:"id"` //ref to FOrcEFDUDescriptor.UUID
 	status string `json:"status"`
 }
 
