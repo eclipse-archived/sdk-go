@@ -239,6 +239,7 @@ type EvalResult struct {
 	ErrorMessage *string `json:"error_msg,omitempty"`
 }
 
+// CompatibleNodeResponse represents results of compatibility check
 type CompatibleNodeResponse struct {
 	UUID         string `json:"uuid"`
 	IsCompatible bool   `json:"is_compatible"`
