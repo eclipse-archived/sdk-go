@@ -485,6 +485,13 @@ func (gad *GAD) GetAgentExecSelectorWithParams(sysid string, tenantid string, no
 	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "agent", "exec", f})
 }
 
+// GetFDUCheckEvalSelector ...
+func (gad *GAD) GetFDUCheckEvalSelector(sysid string, tenantid string, nodeid string, fdu FDU) *yaks.Path {
+	v, _ := json.Marshal(fdu)
+	f := fmt.Sprintf("?(descriptor=%s)", string(v))
+	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "agent", "exec", "check", f})
+}
+
 // ID Extraction
 
 // ExtractUserIDFromPath ...
@@ -1676,6 +1683,66 @@ func (gad *GAD) ObserveNodeNetworkRouters(sysid string, tenantid string, nodeid 
 }
 
 // Agent Evals
+
+func (gad *GAD) CallMultiNodeCheck(sysid string, tenantid string, fdu FDU) ([]EvalResult, error) {
+	res := []EvalResult{}
+	s, err := yaks.NewSelector(gad.GetFDUCheckEvalSelector(sysid, tenantid, "*", fdu).ToString())
+	if err != nil {
+		return res, err
+	}
+
+	kvs := gad.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"CallMultiNodeCheck function replied nil, no nodes in the system?", nil}
+	}
+	for _, kv := range kvs {
+		v := kv.Value().ToString()
+		var genericJSON map[string]interface{}
+		err := json.Unmarshal([]byte(v), &genericJSON)
+		if err != nil {
+			return res, err
+		}
+		switch t := genericJSON["result"].(type) {
+
+		case map[string]interface{}:
+			msi := genericJSON["result"].(map[string]interface{})
+			js, err := json.Marshal(msi)
+			if err != nil {
+				return res, err
+			}
+			s := string(js)
+			genericJSON["result"] = s
+
+			evjs, err := json.Marshal(genericJSON)
+			if err != nil {
+				return res, err
+			}
+			evs := string(evjs)
+
+			sv := EvalResult{}
+			err = json.Unmarshal([]byte(evs), &sv)
+			if err != nil {
+				return res, err
+			}
+
+			res = append(res, sv)
+
+		case string:
+			sv := EvalResult{}
+			err = json.Unmarshal([]byte(v), &sv)
+			if err != nil {
+				return res, err
+			}
+			res = append(res, sv)
+		default:
+			er := FError{"Unexpected type: " + t.(string), nil}
+			return res, &er
+		}
+
+	}
+	return res, nil
+
+}
 
 // AddNodePortToNetwork ...
 func (gad *GAD) AddNodePortToNetwork(sysid string, tenantid string, nodeid string, portid string, netid string) (*EvalResult, error) {

@@ -238,3 +238,8 @@ type EvalResult struct {
 	Error        *int    `json:"error,omitempty"`
 	ErrorMessage *string `json:"error_msg,omitempty"`
 }
+
+type CompatibleNodeResponse struct {
+	UUID         string `json:"uuid"`
+	IsCompatible bool   `json:"is_compatible"`
+}
