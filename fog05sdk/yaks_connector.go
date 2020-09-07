@@ -546,7 +546,7 @@ func (gad *GAD) ExtractRouterIDFromPath(path *yaks.Path) string {
 
 // ExtractNetworkIDFromPath ...
 func (gad *GAD) ExtractNetworkIDFromPath(path *yaks.Path) string {
-	return strings.Split(path.ToString(), URISeparator)[5]
+	return strings.Split(path.ToString(), URISeparator)[6]
 }
 
 // ExtractImageIDFromPath ...
