@@ -486,10 +486,10 @@ func (gad *GAD) GetAgentExecSelectorWithParams(sysid string, tenantid string, no
 }
 
 // GetFDUCheckEvalSelector ...
-func (gad *GAD) GetFDUCheckEvalSelector(sysid string, tenantid string, nodeid string, fdu FDU) *yaks.Path {
+func (gad *GAD) GetFDUCheckEvalSelector(sysid string, tenantid string, nodeid string, fdu FDU) *yaks.Selector {
 	v, _ := json.Marshal(fdu)
 	f := fmt.Sprintf("?(descriptor=%s)", string(v))
-	return CreatePath([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "agent", "exec", "check", f})
+	return CreateSelector([]string{gad.prefix, sysid, "tenants", tenantid, "nodes", nodeid, "agent", "exec", "check", f})
 }
 
 // ID Extraction
@@ -1684,12 +1684,10 @@ func (gad *GAD) ObserveNodeNetworkRouters(sysid string, tenantid string, nodeid 
 
 // Agent Evals
 
+//CallMultiNodeCheck ...
 func (gad *GAD) CallMultiNodeCheck(sysid string, tenantid string, fdu FDU) ([]EvalResult, error) {
 	res := []EvalResult{}
-	s, err := yaks.NewSelector(gad.GetFDUCheckEvalSelector(sysid, tenantid, "*", fdu).ToString())
-	if err != nil {
-		return res, err
-	}
+	s := gad.GetFDUCheckEvalSelector(sysid, tenantid, "*", fdu)
 
 	kvs := gad.ws.Get(s)
 	if len(kvs) == 0 {
