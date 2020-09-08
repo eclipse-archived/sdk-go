@@ -140,6 +140,11 @@ func (fo *FOrchestrator) GetEntityRecordPath(entityid string, instanceid string)
 	return CreatePath([]string{fo.prefix, "entity", entityid, "record", instanceid, "info"})
 }
 
+// GetEntityRecordSelector ...
+func (fo *FOrchestrator) GetEntityRecordSelector(instanceid string) *yaks.Selector {
+	return CreateSelector([]string{fo.prefix, "entity", "*", "record", instanceid, "info"})
+}
+
 // GetAllEntityRecordsSelector ...
 func (fo *FOrchestrator) GetAllEntityRecordsSelector(entityid string) *yaks.Selector {
 	return CreateSelector([]string{fo.prefix, "entity", entityid, "record", "*", "info"})
@@ -341,6 +346,22 @@ func (fo *FOrchestrator) ObserveEntities(listener func(EntityDescriptor)) (*yaks
 // GetEntityInstanceInfo ...
 func (fo *FOrchestrator) GetEntityInstanceInfo(entityid string, instanceid string) (*EntityRecord, error) {
 	s, _ := yaks.NewSelector(fo.GetEntityRecordPath(entityid, instanceid).ToString())
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"Entity Instance not found", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := EntityRecord{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// FindEntityInstanceInfo ...
+func (fo *FOrchestrator) FindEntityInstanceInfo(instanceid string) (*EntityRecord, error) {
+	s := fo.GetEntityRecordSelector(instanceid)
 	kvs := fo.ws.Get(s)
 	if len(kvs) == 0 {
 		return nil, &FError{"Entity Instance not found", nil}
