@@ -52,6 +52,18 @@ type ReplyNewJobMessage struct {
 	Body           *string `json:"body,omitempty"`
 }
 
+//FIMInfo represents information required for connection with a FIM
+type FIMInfo struct {
+	UUID    string `json:"uuid"`
+	Locator string `json:"locator"`
+}
+
+//CloudInfo represents information required for connection with a Cloud (K8s)
+type CloudInfo struct {
+	UUID   string `json:"uuid"`
+	Config string `json:"config"`
+}
+
 // FOrchestrator ...
 type FOrchestrator struct {
 	ws        *yaks.Workspace
@@ -125,6 +137,26 @@ func (fo *FOrchestrator) GetAllJobsInfoSelector() *yaks.Selector {
 
 // Catalog Paths and Selectors
 
+// GetFIMPath ...
+func (fo *FOrchestrator) GetFIMPath(fimid string) *yaks.Path {
+	return CreatePath([]string{fo.prefix, "fim", fimid, "info"})
+}
+
+// GetAllFIMsSelector ...
+func (fo *FOrchestrator) GetAllFIMsSelector() *yaks.Selector {
+	return CreateSelector([]string{fo.prefix, "fim", "*", "info"})
+}
+
+// GetCloudPath ...
+func (fo *FOrchestrator) GetCloudPath(cloudid string) *yaks.Path {
+	return CreatePath([]string{fo.prefix, "cloud", cloudid, "info"})
+}
+
+// GetAllCloudsSelector ...
+func (fo *FOrchestrator) GetAllCloudsSelector() *yaks.Selector {
+	return CreateSelector([]string{fo.prefix, "cloud", "*", "info"})
+}
+
 // GetEntityPath ...
 func (fo *FOrchestrator) GetEntityPath(entityid string) *yaks.Path {
 	return CreatePath([]string{fo.prefix, "entity", entityid, "info"})
@@ -197,6 +229,16 @@ func (fo *FOrchestrator) GetAllFDUsRecordsSelector() *yaks.Selector {
 
 // ID Extraction
 
+// ExtractFIMID ...
+func (fo *FOrchestrator) ExtractFIMID(path *yaks.Path) string {
+	return strings.Split(path.ToString(), URISeparator)[4]
+}
+
+// ExtractCloudID ...
+func (fo *FOrchestrator) ExtractCloudID(path *yaks.Path) string {
+	return strings.Split(path.ToString(), URISeparator)[4]
+}
+
 // ExtractEntityID ...
 func (fo *FOrchestrator) ExtractEntityID(path *yaks.Path) string {
 	return strings.Split(path.ToString(), URISeparator)[4]
@@ -262,6 +304,164 @@ func (fo *FOrchestrator) RemoveJobInfo(jobid string) error {
 	s := fo.GetJobInfoPath(jobid)
 	err := fo.ws.Remove(s)
 	return err
+}
+
+// GetFIMInfo ...
+func (fo *FOrchestrator) GetFIMInfo(fimid string) (*FIMInfo, error) {
+	s, _ := yaks.NewSelector(fo.GetFIMPath(fimid).ToString())
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"Entity not found", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := FIMInfo{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// GetAllFIMsInfo ...
+func (fo *FOrchestrator) GetAllFIMsInfo() ([]FIMInfo, error) {
+	s := fo.GetAllFIMsSelector()
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return []FIMInfo{}, &FError{"No fims found", nil}
+	}
+	var fims []FIMInfo = []FIMInfo{}
+	for _, kv := range kvs {
+		v := kv.Value().ToString()
+		sv := FIMInfo{}
+		err := json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return fims, err
+		}
+		fims = append(fims, sv)
+	}
+	return fims, nil
+}
+
+// AddFIMInfo ...
+func (fo *FOrchestrator) AddFIMInfo(info FIMInfo) error {
+	s := fo.GetFIMPath(info.UUID)
+	v, err := json.Marshal(info)
+	if err != nil {
+		return err
+	}
+	sv := yaks.NewStringValue(string(v))
+	err = fo.ws.Put(s, sv)
+	return err
+}
+
+// RemoveFIMInfo ...
+func (fo *FOrchestrator) RemoveFIMInfo(fimid string) error {
+	s := fo.GetFIMPath(fimid)
+	err := fo.ws.Remove(s)
+	return err
+}
+
+// ObserveFIMs ...
+func (fo *FOrchestrator) ObserveFIMs(listener func(FIMInfo)) (*yaks.SubscriptionID, error) {
+	s := fo.GetAllFIMsSelector()
+
+	cb := func(kvs []yaks.Change) {
+		if len(kvs) > 0 {
+			v := kvs[0].Value().ToString()
+			sv := FIMInfo{}
+			err := json.Unmarshal([]byte(v), &sv)
+			if err != nil {
+				panic(err.Error())
+			}
+			listener(sv)
+		}
+	}
+
+	sid, err := fo.ws.Subscribe(s, cb)
+	if err != nil {
+		return nil, err
+	}
+	fo.listeners = append(fo.listeners, sid)
+	return sid, nil
+}
+
+// GetCloudInfo ...
+func (fo *FOrchestrator) GetCloudInfo(cloudid string) (*CloudInfo, error) {
+	s, _ := yaks.NewSelector(fo.GetCloudPath(cloudid).ToString())
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"Entity not found", nil}
+	}
+	v := kvs[0].Value().ToString()
+	sv := CloudInfo{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
+// GetAllCloudsInfo ...
+func (fo *FOrchestrator) GetAllCloudsInfo() ([]CloudInfo, error) {
+	s := fo.GetAllCloudsSelector()
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return []CloudInfo{}, &FError{"No clouds found", nil}
+	}
+	var clouds []CloudInfo = []CloudInfo{}
+	for _, kv := range kvs {
+		v := kv.Value().ToString()
+		sv := CloudInfo{}
+		err := json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return clouds, err
+		}
+		clouds = append(clouds, sv)
+	}
+	return clouds, nil
+}
+
+// AddCloudInfo ...
+func (fo *FOrchestrator) AddCloudInfo(info CloudInfo) error {
+	s := fo.GetCloudPath(info.UUID)
+	v, err := json.Marshal(info)
+	if err != nil {
+		return err
+	}
+	sv := yaks.NewStringValue(string(v))
+	err = fo.ws.Put(s, sv)
+	return err
+}
+
+// RemoveCloudInfo ...
+func (fo *FOrchestrator) RemoveCloudInfo(cloudid string) error {
+	s := fo.GetCloudPath(cloudid)
+	err := fo.ws.Remove(s)
+	return err
+}
+
+// ObserveClouds ...
+func (fo *FOrchestrator) ObserveClouds(listener func(CloudInfo)) (*yaks.SubscriptionID, error) {
+	s := fo.GetAllCloudsSelector()
+
+	cb := func(kvs []yaks.Change) {
+		if len(kvs) > 0 {
+			v := kvs[0].Value().ToString()
+			sv := CloudInfo{}
+			err := json.Unmarshal([]byte(v), &sv)
+			if err != nil {
+				panic(err.Error())
+			}
+			listener(sv)
+		}
+	}
+
+	sid, err := fo.ws.Subscribe(s, cb)
+	if err != nil {
+		return nil, err
+	}
+	fo.listeners = append(fo.listeners, sid)
+	return sid, nil
 }
 
 // GetEntityInfo ...
