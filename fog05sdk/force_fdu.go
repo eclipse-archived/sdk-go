@@ -130,7 +130,7 @@ type FOrcEFDUDescriptor struct {
 type FOrcEFDURecord struct {
 	UUID   string `json:"uuid"`
 	ID     string `json:"id"` //ref to FOrcEFDUDescriptor.UUID
-	status string `json:"status"`
+	Status string `json:"status"`
 }
 
 /*
