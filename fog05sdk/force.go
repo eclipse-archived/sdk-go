@@ -219,12 +219,12 @@ func (fo *FOrchestrator) GetFDURecordPath(fduid string, instanceid string) *yaks
 
 // GetAllFDURecordsSelector ...
 func (fo *FOrchestrator) GetAllFDURecordsSelector(fduid string) *yaks.Selector {
-	return CreateSelector([]string{fo.prefix, "fdu", fduid, "records", "*", "info"})
+	return CreateSelector([]string{fo.prefix, "fdu", fduid, "record", "*", "info"})
 }
 
 // GetAllFDUsRecordsSelector ...
 func (fo *FOrchestrator) GetAllFDUsRecordsSelector() *yaks.Selector {
-	return CreateSelector([]string{fo.prefix, "fdu", "*", "records", "*", "info"})
+	return CreateSelector([]string{fo.prefix, "fdu", "*", "record", "*", "info"})
 }
 
 // ID Extraction
