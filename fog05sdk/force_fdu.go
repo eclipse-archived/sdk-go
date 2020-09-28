@@ -122,8 +122,9 @@ type FOrcEFDUDescriptor struct {
 	ConnectionPoints         []FOrcEConnectionPointDescriptor  `json:"connection_points"`
 	Configuration            *FOrcEFDUConfiguration            `json:"configuration,omitempty"`
 	MigrationKind            string                            `json:"migration_kind"`
-	ScalingPolicies          *[]ScalingPolicy                  `json:"scaling_policies,omitempty"`
-	DependsOn                []string                          `json:"depends_on"`
+	Replicas                 uint32                            `json:"replicas"`
+	// ScalingPolicies          *[]ScalingPolicy                  `json:"scaling_policies,omitempty"`
+	DependsOn []string `json:"depends_on"`
 }
 
 //FOrcEFDURecord represent a record
