@@ -122,7 +122,7 @@ type FOrcEFDUDescriptor struct {
 	ConnectionPoints         []FOrcEConnectionPointDescriptor  `json:"connection_points"`
 	Configuration            *FOrcEFDUConfiguration            `json:"configuration,omitempty"`
 	MigrationKind            string                            `json:"migration_kind"`
-	Replicas                 uint32                            `json:"replicas"`
+	Replicas                 *uint8                            `json:"replicas,omitempty"` //default 1
 	// ScalingPolicies          *[]ScalingPolicy                  `json:"scaling_policies,omitempty"`
 	DependsOn []string `json:"depends_on"`
 }
