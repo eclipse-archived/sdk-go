@@ -99,4 +99,6 @@ type EntityRecord struct {
 	Status       string   `json:"status"`
 	FDUs         []string `json:"fdus"`
 	VirtualLinks []string `json:"virtual_links"`
+	FIMID        *string  `json:"fim_id,omitempty"`
+	CloudID      *string  `json:"cloud_id,omitempy"`
 }
