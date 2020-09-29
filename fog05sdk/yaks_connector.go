@@ -1700,7 +1700,7 @@ func (gad *GAD) CallMultiNodeCheck(sysid string, tenantid string, fdu FDU) ([]Ev
 		if err != nil {
 			return res, err
 		}
-		switch t := genericJSON["result"].(type) {
+		switch genericJSON["result"].(type) {
 
 		case map[string]interface{}:
 			msi := genericJSON["result"].(map[string]interface{})
@@ -1733,7 +1733,7 @@ func (gad *GAD) CallMultiNodeCheck(sysid string, tenantid string, fdu FDU) ([]Ev
 			}
 			res = append(res, sv)
 		default:
-			er := FError{"Unexpected type: " + t.(string), nil}
+			er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 			return res, &er
 		}
 
@@ -1765,7 +1765,7 @@ func (gad *GAD) AddNodePortToNetwork(sysid string, tenantid string, nodeid strin
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -1798,7 +1798,7 @@ func (gad *GAD) AddNodePortToNetwork(sysid string, tenantid string, nodeid strin
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -1826,7 +1826,7 @@ func (gad *GAD) RemoveNodePortFromNetwork(sysid string, tenantid string, nodeid 
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -1859,7 +1859,7 @@ func (gad *GAD) RemoveNodePortFromNetwork(sysid string, tenantid string, nodeid 
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -1884,7 +1884,7 @@ func (gad *GAD) CrateFloatingIPInNode(sysid string, tenantid string, nodeid stri
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -1917,7 +1917,7 @@ func (gad *GAD) CrateFloatingIPInNode(sysid string, tenantid string, nodeid stri
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -1945,7 +1945,7 @@ func (gad *GAD) RemoveFloatingIPFromNode(sysid string, tenantid string, nodeid s
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -1978,7 +1978,7 @@ func (gad *GAD) RemoveFloatingIPFromNode(sysid string, tenantid string, nodeid s
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2007,7 +2007,7 @@ func (gad *GAD) AssignNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2040,7 +2040,7 @@ func (gad *GAD) AssignNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2069,7 +2069,7 @@ func (gad *GAD) RetainNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2102,7 +2102,7 @@ func (gad *GAD) RetainNodeFloatingIP(sysid string, tenantid string, nodeid strin
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2137,7 +2137,7 @@ func (gad *GAD) AddPortToRouter(sysid string, tenantid string, nodeid string, ro
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2170,7 +2170,7 @@ func (gad *GAD) AddPortToRouter(sysid string, tenantid string, nodeid string, ro
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2199,7 +2199,7 @@ func (gad *GAD) RemovePortFromRouter(sysid string, tenantid string, nodeid strin
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2232,7 +2232,7 @@ func (gad *GAD) RemovePortFromRouter(sysid string, tenantid string, nodeid strin
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2262,7 +2262,7 @@ func (gad *GAD) OnboardFDUFromNode(sysid string, tenantid string, nodeid string,
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2295,7 +2295,7 @@ func (gad *GAD) OnboardFDUFromNode(sysid string, tenantid string, nodeid string,
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2323,7 +2323,7 @@ func (gad *GAD) DefineFDUInNode(sysid string, tenantid string, nodeid string, fd
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2356,7 +2356,7 @@ func (gad *GAD) DefineFDUInNode(sysid string, tenantid string, nodeid string, fd
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2476,7 +2476,7 @@ func (gad *GAD) CreateNetworkInNode(sysid string, tenantid string, nodeid string
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2509,7 +2509,7 @@ func (gad *GAD) CreateNetworkInNode(sysid string, tenantid string, nodeid string
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -2537,7 +2537,7 @@ func (gad *GAD) RemoveNetworkFromNode(sysid string, tenantid string, nodeid stri
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -2570,7 +2570,7 @@ func (gad *GAD) RemoveNetworkFromNode(sysid string, tenantid string, nodeid stri
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -3141,7 +3141,7 @@ func (lad *LAD) ExecAgentEval(nodeid string, fname string, props map[string]inte
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -3174,7 +3174,7 @@ func (lad *LAD) ExecAgentEval(nodeid string, fname string, props map[string]inte
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -3263,7 +3263,7 @@ func (lad *LAD) ExecNMEval(nodeid string, pluginid string, fname string, props m
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -3296,7 +3296,7 @@ func (lad *LAD) ExecNMEval(nodeid string, pluginid string, fname string, props m
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
@@ -3324,7 +3324,7 @@ func (lad *LAD) ExecPluginEval(nodeid string, pluginid string, fname string, pro
 		return nil, err
 	}
 
-	switch t := genericJSON["result"].(type) {
+	switch genericJSON["result"].(type) {
 
 	case map[string]interface{}:
 		msi := genericJSON["result"].(map[string]interface{})
@@ -3357,7 +3357,7 @@ func (lad *LAD) ExecPluginEval(nodeid string, pluginid string, fname string, pro
 		}
 		return &sv, nil
 	default:
-		er := FError{"Unexpected type: " + t.(string), nil}
+		er := FError{fmt.Sprintf("Unexpected type: %T", genericJSON["result"]), nil}
 		return nil, &er
 	}
 
