@@ -299,6 +299,26 @@ func (fo *FOrchestrator) GetJobInfo(jobid string) (*Job, error) {
 	return &sv, nil
 }
 
+// GetAllJobsInfo ...
+func (fo *FOrchestrator) GetAllJobsInfo() ([]Job, error) {
+	s := fo.GetAllJobsInfoSelector()
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return []Job{}, &FError{"No jobs found", nil}
+	}
+	var jobs []Job = []Job{}
+	for _, kv := range kvs {
+		v := kv.Value().ToString()
+		sv := Job{}
+		err := json.Unmarshal([]byte(v), &sv)
+		if err != nil {
+			return jobs, err
+		}
+		jobs = append(jobs, sv)
+	}
+	return jobs, nil
+}
+
 //RemoveJobInfo ...
 func (fo *FOrchestrator) RemoveJobInfo(jobid string) error {
 	s := fo.GetJobInfoPath(jobid)
