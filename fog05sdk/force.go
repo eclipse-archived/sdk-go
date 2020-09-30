@@ -62,6 +62,9 @@ type FIMInfo struct {
 type CloudInfo struct {
 	UUID   string `json:"uuid"`
 	Config string `json:"config"`
+	CA     string `json:"ca"`
+	Cert   string `json:"cert"`
+	Key    string `json:"key"`
 }
 
 // FOrchestrator ...
