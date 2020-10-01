@@ -855,6 +855,23 @@ func (fo *FOrchestrator) GetAllFDURecordsInfo(fduid string) ([]FOrcEFDURecord, e
 	return entities, nil
 }
 
+// GetFDURecordInfo ...
+func (fo *FOrchestrator) GetFDURecordInfo(fduid string, instanceid string) (*FOrcEFDURecord, error) {
+	s, _ := yaks.NewSelector(fo.GetFDURecordPath(fduid, instanceid).ToString())
+	kvs := fo.ws.Get(s)
+	if len(kvs) == 0 {
+		return nil, &FError{"No record found", nil}
+	}
+
+	v := kvs[0].Value().ToString()
+	sv := FOrcEFDURecord{}
+	err := json.Unmarshal([]byte(v), &sv)
+	if err != nil {
+		return nil, err
+	}
+	return &sv, nil
+}
+
 // AddFDURecord ...
 func (fo *FOrchestrator) AddFDURecord(info FOrcEFDURecord) error {
 	s := fo.GetFDURecordPath(info.ID, info.UUID)
