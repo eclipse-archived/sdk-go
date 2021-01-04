@@ -7,6 +7,8 @@
 
 # Eclipse fog05 SDK Go
 
+THIS REPOSITORY HAS BEEN ARCHIVED
+
 This repository contains the Eclipse fog05 SDK for Go
 
 With this SDK you can build plugins or extend Eclipse fog05 functionalities using go code.
